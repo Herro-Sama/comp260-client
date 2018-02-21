@@ -36,15 +36,15 @@ namespace Client
 
             while (true)
             {
-                String Msg = ID.ToString() + " testing, testing, 1,2,3";
+                String Msg = Console.ReadLine();
                 ID++;
                 ASCIIEncoding encoder = new ASCIIEncoding();
                 byte[] buffer = encoder.GetBytes(Msg);
 
                 try
                 {
-                    Console.WriteLine("Writing to server: " + Msg);
                     int bytesSent = s.Send(buffer);
+                    Console.WriteLine("\nSending Packet to Server");
                 }
                 catch (System.Exception ex)
                 {

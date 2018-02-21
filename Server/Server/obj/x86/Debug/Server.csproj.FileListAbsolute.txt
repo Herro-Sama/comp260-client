@@ -1,0 +1,6 @@
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\Server\obj\x86\Debug\Server.csprojResolveAssemblyReference.cache
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\Server\obj\x86\Debug\Server.csproj.CoreCompileInputs.cache
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\Server\bin\Debug\Server.exe
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\Server\bin\Debug\Server.pdb
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\Server\obj\x86\Debug\Server.exe
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\Server\obj\x86\Debug\Server.pdb
