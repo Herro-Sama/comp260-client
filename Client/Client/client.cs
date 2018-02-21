@@ -11,6 +11,40 @@ namespace Client
 {
     class client
     {
+        static void clientRecieve(object o)
+        {
+            bool ServerConnection = true;
+
+            Socket morseClient = (Socket)o;
+
+            while (ServerConnection == true)
+            {
+                try
+                {
+                    byte[] buffer = new byte[4096];
+                    int result;
+
+                    result = morseClient.Receive(buffer);
+
+                    if (result > 0)
+                    {
+                        ASCIIEncoding encoder = new ASCIIEncoding();
+                        String recdMsg = encoder.GetString(buffer, 0, result);
+
+                        Console.WriteLine(recdMsg);
+
+                    }
+                }
+                catch (Exception)
+                {
+                    ServerConnection = false;
+                    Console.WriteLine("Server Connection Terminated!");
+                }
+
+            }
+        }
+
+
         static void Main(string[] args)
         {
             Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -32,6 +66,10 @@ namespace Client
 				}
 			}
 
+            Thread myThread = new Thread(clientRecieve);
+            myThread.Start(s);
+
+
             int ID = 0;
 
             while (true)
@@ -44,7 +82,8 @@ namespace Client
                 try
                 {
                     int bytesSent = s.Send(buffer);
-                    Console.WriteLine("\nSending Packet to Server");
+                    Console.Clear();
+                    Console.WriteLine(Msg + "\nSent Request to Server");
                 }
                 catch (System.Exception ex)
                 {

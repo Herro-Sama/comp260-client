@@ -51,8 +51,8 @@ namespace server
 
                         lock (incommingMessages)
                         {
-                            string message = "" + buffer;
-                            MudowRun.Process(receiveInfo.room, message, receiveInfo.socket);
+                            string message = encoder.GetString(buffer, 0, result);
+                            receiveInfo.room = MudowRun.Process(receiveInfo.room, message, receiveInfo.socket);
                         }
                     }
                 }
