@@ -65,11 +65,9 @@ namespace server
            return spawnRoom;
         }
 
-        public Room Process(Room clientRoom, String key, Socket UserSocket)
+        public void RoomInfo(Room clientRoom, Socket UserSocket)
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
-
-
             string returnMessage = "";
 
             returnMessage += (clientRoom.desc);
@@ -82,7 +80,18 @@ namespace server
                 }
             }
 
-            returnMessage += ("\n> "); 
+            byte[] sendbuffer = encoder.GetBytes(returnMessage);
+
+            int bytesSent = UserSocket.Send(sendbuffer);
+
+        }
+
+        public Room Process(Room clientRoom, String key, Socket UserSocket)
+        {
+            ASCIIEncoding encoder = new ASCIIEncoding();
+
+
+            string returnMessage = "";
 
             var input = key.Split(' ');
 

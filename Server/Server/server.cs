@@ -37,6 +37,8 @@ namespace server
             ReceiveThreadLaunchInfo receiveInfo = obj as ReceiveThreadLaunchInfo;
             bool socketactive = true;
 
+            Room lastclientRoom = receiveInfo.room;
+
             while ((active == true) && (socketactive == true))
             {
                 byte[] buffer = new byte[4094];
@@ -44,6 +46,7 @@ namespace server
                 try
                 {
                     int result = receiveInfo.socket.Receive(buffer);
+                   
 
                     if (result > 0)
                     {
@@ -53,6 +56,8 @@ namespace server
                         {
                             string message = encoder.GetString(buffer, 0, result);
                             receiveInfo.room = MudowRun.Process(receiveInfo.room, message, receiveInfo.socket);
+                            MudowRun.RoomInfo(receiveInfo.room, receiveInfo.socket);
+                            lastclientRoom = receiveInfo.room;
                         }
                     }
                 }
@@ -82,6 +87,8 @@ namespace server
                 var myThread = new Thread(clientReceiveThread);
 
                 var ThreadLaunchInfo = new ReceiveThreadLaunchInfo(ID, newClientSocket, MudowRun.SetRoom());
+
+                MudowRun.RoomInfo(ThreadLaunchInfo.room, ThreadLaunchInfo.socket);
 
                 string clientID = "" + ID;
 
