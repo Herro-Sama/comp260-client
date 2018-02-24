@@ -19,16 +19,16 @@ namespace server
 
         class ReceiveThreadLaunchInfo
         {
-            public ReceiveThreadLaunchInfo(int ID, Socket socket, Room room)
+            public ReceiveThreadLaunchInfo(int ID, Socket socket, Character newCharacter)
             {
                 this.ID = ID;
                 this.socket = socket;
-                this.room = room;
+                this.clientCharacter = newCharacter;
             }
 
             public int ID;
             public Socket socket;
-            public Room room;
+            public Character clientCharacter;
 
         }
 
@@ -37,7 +37,7 @@ namespace server
             ReceiveThreadLaunchInfo receiveInfo = obj as ReceiveThreadLaunchInfo;
             bool socketactive = true;
 
-            Room lastclientRoom = receiveInfo.room;
+            Room lastclientRoom = receiveInfo.clientCharacter.playerRoom;
 
             while ((active == true) && (socketactive == true))
             {
@@ -55,9 +55,9 @@ namespace server
                         lock (incommingMessages)
                         {
                             string message = encoder.GetString(buffer, 0, result);
-                            receiveInfo.room = MudowRun.Process(receiveInfo.room, message, receiveInfo.socket);
-                            MudowRun.RoomInfo(receiveInfo.room, receiveInfo.socket);
-                            lastclientRoom = receiveInfo.room;
+                            receiveInfo.clientCharacter.playerRoom = MudowRun.Process(receiveInfo.clientCharacter, message, receiveInfo.socket);
+                            MudowRun.RoomInfo(receiveInfo.clientCharacter, receiveInfo.socket);
+                            lastclientRoom = receiveInfo.clientCharacter.playerRoom;
                         }
                     }
                 }
@@ -86,11 +86,15 @@ namespace server
 
                 var myThread = new Thread(clientReceiveThread);
 
-                var ThreadLaunchInfo = new ReceiveThreadLaunchInfo(ID, newClientSocket, MudowRun.SetRoom());
-
-                MudowRun.RoomInfo(ThreadLaunchInfo.room, ThreadLaunchInfo.socket);
-
                 string clientID = "" + ID;
+
+                var newCharacter = new Character(clientID);
+
+                var ThreadLaunchInfo = new ReceiveThreadLaunchInfo(ID, newClientSocket, newCharacter);
+
+                ThreadLaunchInfo.clientCharacter.playerRoom = MudowRun.SetRoom();
+
+                MudowRun.RoomInfo(ThreadLaunchInfo.clientCharacter, ThreadLaunchInfo.socket);
 
                 connectedClients.Add(clientID, ThreadLaunchInfo);
                     

@@ -18,46 +18,76 @@ namespace server
         {
             roomMap = new Dictionary<string, Room>();
             {
-                var room = new Room("Room 0", "You are standing in the entrance hall\nAll adventures start here");
-                room.north = "Room 1";
+                var room = new Room("A1 Roof", "You find yourself on the roof of the apartment building. \n The view is pretty spectacular but it won't help you complete your mission.\n ");
+                room.south = "A1 Stairwell 4F";
                 roomMap.Add(room.name, room);
             }
 
             {
-                var room = new Room("Room 1", "You are in room 1");
-                room.south = "Room 0";
-                room.west = "Room 3";
-                room.east = "Room 2";
+                var room = new Room("A1 Stairwell 4F", "This is the fourth floor stairwell, it leads to the roof.");
+                room.north = "A1 Roof";
+                room.down = "A1 Stairwell 3F";
                 roomMap.Add(room.name, room);
             }
 
             {
-                var room = new Room("Room 2", "You are in room 2");
-                room.north = "Room 4";
+                var room = new Room("A1 Stairwell 3F", "This is the third floor stairwell, this is the floor for the safe house.");
+                room.north = "A1 Hall 3F";
+                room.up = "A1 Stairwell 4F";
+                room.down = "A1 Stairwell 2F";
                 roomMap.Add(room.name, room);
             }
 
             {
-                var room = new Room("Room 3", "You are in room 3");
-                room.east = "Room 1";
+                var room = new Room("A1 Hall 3F", "This is the third floor hallway, it has rooms numbered from 20 - 30. The safe house is in room 23.");
+                room.north = "A1 Safe House";
+                room.south = "A1 Stairwell 3F";
                 roomMap.Add(room.name, room);
             }
 
             {
-                var room = new Room("Room 4", "You are in room 4");
-                room.south = "Room 2";
-                room.west = "Room 5";
+                var room = new Room("A1 Safe House", "You awake in the safe house. \nYou know your mission was to destroy the research data being kept at Renraku Corp R&D lab.");
+                room.south = "A1 Hall 3F";
                 roomMap.Add(room.name, room);
             }
 
             {
-                var room = new Room("Room 5", "You are in room 5");
-                room.south = "Room 1";
-                room.east = "Room 4";
+                var room = new Room("A1 Stairwell 2F", "This is the second floor stairwell.");
+                room.north = "A1 Hall 2F";
+                room.up = "A1 Stairwell 3F";
+                room.down = "A1 Stairwell 1F";
                 roomMap.Add(room.name, room);
             }
 
-            spawnRoom = roomMap["Room 0"];
+            {
+                var room = new Room("A1 Hall 2F", "This is the second floor hallway, rooms numbered 1 - 19 are here. Nothing of interest though should probably get back to my mission.");
+                room.south = "A1 Stairwell 2F";
+                roomMap.Add(room.name, room);
+            }
+
+            {
+                var room = new Room("A1 Stairwell 1F", "This is the ground floor stairwell.");
+                room.north = "A1 Hall 1F";
+                room.up = "A1 Stairwell 2F";
+                roomMap.Add(room.name, room);
+            }
+
+            {
+                var room = new Room("A1 Hall 1F", "This is the ground floor hallway, nothing but reception to be found here.");
+                room.south = "A1 Stairwell 2F";
+                room.north = "Outside South";
+                roomMap.Add(room.name, room);
+            }
+
+            {
+                var room = new Room("Outside South", "Finally I'm outside, now to get to the R&D lab to destroy that data.");
+                room.south = "A1 Stairwell 2F";
+                roomMap.Add(room.name, room);
+            }
+
+
+
+            spawnRoom = roomMap["A1 Safe House"];
         }
 
         public Room SetRoom()
@@ -65,16 +95,16 @@ namespace server
            return spawnRoom;
         }
 
-        public void RoomInfo(Room clientRoom, Socket UserSocket)
+        public void RoomInfo(Character clientCharacter, Socket UserSocket)
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
             string returnMessage = "";
 
-            returnMessage += (clientRoom.desc);
+            returnMessage += (clientCharacter.playerRoom.desc);
             returnMessage += ("Exits");
-            for (var i = 0; i < clientRoom.exits.Length; i++)
+            for (var i = 0; i < clientCharacter.playerRoom.exits.Length; i++)
             {
-                if (clientRoom.exits[i] != null)
+                if (clientCharacter.playerRoom.exits[i] != null)
                 {
                     returnMessage += (Room.exitNames[i] + " ");
                 }
@@ -86,7 +116,7 @@ namespace server
 
         }
 
-        public Room Process(Room clientRoom, String key, Socket UserSocket)
+        public Room Process(Character clientCharacter, String key, Socket UserSocket)
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
 
@@ -95,7 +125,7 @@ namespace server
 
             var input = key.Split(' ');
 
-            Console.WriteLine("Client in room " + clientRoom.name + " sent " + key);
+            Console.WriteLine(clientCharacter.name + " just entered " + clientCharacter.playerRoom.name);
 
             switch (input[0].ToLower())
             {
@@ -128,39 +158,39 @@ namespace server
 
                 case "go":
                     // is arg[1] sensible?
-                    if ((input[1].ToLower() == "north") && (clientRoom.north != null))
+                    if ((input[1].ToLower() == "north") && (clientCharacter.playerRoom.north != null))
                     {
-                        clientRoom = roomMap[clientRoom.north];
+                        clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.north];
                     }
                     else
                     {
-                        if ((input[1].ToLower() == "south") && (clientRoom.south != null))
+                        if ((input[1].ToLower() == "south") && (clientCharacter.playerRoom.south != null))
                         {
-                            clientRoom = roomMap[clientRoom.south];
+                            clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.south];
                         }
                         else
                         {
-                            if ((input[1].ToLower() == "east") && (clientRoom.east != null))
+                            if ((input[1].ToLower() == "east") && (clientCharacter.playerRoom.east != null))
                             {
-                                clientRoom = roomMap[clientRoom.east];
+                                clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.east];
                             }
                             else
                             {
-                                if ((input[1].ToLower() == "west") && (clientRoom.west != null))
+                                if ((input[1].ToLower() == "west") && (clientCharacter.playerRoom.west != null))
                                 {
-                                    clientRoom = roomMap[clientRoom.west];
+                                    clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.west];
                                 }
                                 else
                                 {
-                                    if ((input[1].ToLower() == "up") && (clientRoom.up != null))
+                                    if ((input[1].ToLower() == "up") && (clientCharacter.playerRoom.up != null))
                                     {
-                                        clientRoom = roomMap[clientRoom.up];
+                                        clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.up];
                                     }
                                     else
                                     {
-                                        if ((input[1].ToLower() == "down") && (clientRoom.down != null))
+                                        if ((input[1].ToLower() == "down") && (clientCharacter.playerRoom.down != null))
                                         {
-                                            clientRoom = roomMap[clientRoom.down];
+                                            clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.down];
                                         }
                                         else
                                         {
@@ -188,7 +218,7 @@ namespace server
 
             int bytesSent = UserSocket.Send(sendbuffer);
 
-            return clientRoom;
+            return clientCharacter.playerRoom;
         }
     }
 }
