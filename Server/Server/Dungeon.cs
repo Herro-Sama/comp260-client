@@ -120,12 +120,15 @@ namespace server
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
 
+            byte[] sendbuffer;
+
+            int bytesSent;
 
             string returnMessage = "";
 
             var input = key.Split(' ');
 
-            Console.WriteLine(clientCharacter.name + " just entered " + clientCharacter.playerRoom.name);
+            Console.WriteLine(clientCharacter.name + " just left the following room " + clientCharacter.playerRoom.name);
 
             switch (input[0].ToLower())
             {
@@ -141,56 +144,77 @@ namespace server
 
                 case "look":
                     //loop straight back
-                    Console.Clear();
                     Thread.Sleep(1000);
                     break;
 
                 case "say":
-                    returnMessage += ("You say ");
+
+                    returnMessage += clientCharacter.name + " said ";
+
                     for (var i = 1; i < input.Length; i++)
                     {
                         returnMessage += (input[i] + " ");
                     }
 
+                    foreach (Socket player in roomMap[clientCharacter.playerRoom.name].playersInRoom)
+                    {
+                        if (player != UserSocket)
+                        {
+                            sendbuffer = encoder.GetBytes(returnMessage);
+                            bytesSent = player.Send(sendbuffer);
+                        }
+                    }
                     Thread.Sleep(1000);
-                    Console.Clear();
+
                     break;
 
                 case "go":
                     // is arg[1] sensible?
                     if ((input[1].ToLower() == "north") && (clientCharacter.playerRoom.north != null))
                     {
+                        roomMap[clientCharacter.playerRoom.name].removeplayer(UserSocket);
                         clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.north];
+                        roomMap[clientCharacter.playerRoom.north].addplayer(UserSocket);
                     }
                     else
                     {
                         if ((input[1].ToLower() == "south") && (clientCharacter.playerRoom.south != null))
                         {
+                            roomMap[clientCharacter.playerRoom.name].removeplayer(UserSocket);
                             clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.south];
+                            roomMap[clientCharacter.playerRoom.north].addplayer(UserSocket);
                         }
                         else
                         {
                             if ((input[1].ToLower() == "east") && (clientCharacter.playerRoom.east != null))
                             {
+                                roomMap[clientCharacter.playerRoom.name].removeplayer(UserSocket);
                                 clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.east];
+                                roomMap[clientCharacter.playerRoom.north].addplayer(UserSocket);
                             }
                             else
                             {
                                 if ((input[1].ToLower() == "west") && (clientCharacter.playerRoom.west != null))
                                 {
+                                    roomMap[clientCharacter.playerRoom.name].removeplayer(UserSocket);
                                     clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.west];
+                                    roomMap[clientCharacter.playerRoom.north].addplayer(UserSocket);
                                 }
                                 else
                                 {
                                     if ((input[1].ToLower() == "up") && (clientCharacter.playerRoom.up != null))
                                     {
+                                        roomMap[clientCharacter.playerRoom.name].removeplayer(UserSocket);
                                         clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.up];
+                                        roomMap[clientCharacter.playerRoom.north].addplayer(UserSocket);
                                     }
                                     else
                                     {
                                         if ((input[1].ToLower() == "down") && (clientCharacter.playerRoom.down != null))
                                         {
+                                            roomMap[clientCharacter.playerRoom.name].removeplayer(UserSocket);
                                             clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.down];
+                                            roomMap[clientCharacter.playerRoom.north].addplayer(UserSocket);
                                         }
                                         else
                                         {
@@ -214,9 +238,12 @@ namespace server
                     returnMessage += ("\nPress any key to continue");
                     break;
             }
-            byte[] sendbuffer = encoder.GetBytes(returnMessage);
 
-            int bytesSent = UserSocket.Send(sendbuffer);
+            returnMessage += "There are " + roomMap[clientCharacter.playerRoom.name].playersInRoom.Count() + " people in this room";
+
+           sendbuffer = encoder.GetBytes(returnMessage);
+
+           bytesSent = UserSocket.Send(sendbuffer);
 
             return clientCharacter.playerRoom;
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net.Sockets;
 
 namespace server
 {
@@ -24,10 +25,10 @@ namespace server
             
         }
 
-        public void SetPlayerRoom(Room SpawnRoom)
+        public void SetPlayerRoom(Room SpawnRoom, Socket ClientSocket)
         {
             this.playerRoom = SpawnRoom;
-            CharacterStats.Add("Essence", 7);
+            SpawnRoom.addplayer(ClientSocket);
         }
 
         public void CharacterCreation()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net.Sockets;
 
 namespace server
 {
@@ -49,11 +50,22 @@ namespace server
             set { exits[5] = value; }
         }
 
+        public void addplayer(Socket player)
+        {
+            playersInRoom.Add(player);
+        }
+
+        public void removeplayer(Socket player)
+        {
+            playersInRoom.Remove(player);
+        }
 
         public String name = "";
         public String desc = "";
         public String[] exits = new String[6];
         public static String[] exitNames = { "NORTH", "SOUTH", "EAST", "WEST", "UP", "DOWN" };
+        public List<Socket> playersInRoom = new List<Socket>();
+       
     }
 
 }
