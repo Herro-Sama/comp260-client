@@ -172,49 +172,49 @@ namespace server
                     // is arg[1] sensible?
                     if ((input[1].ToLower() == "north") && (clientCharacter.playerRoom.north != null))
                     {
-                        roomMap[clientCharacter.playerRoom.name].removeplayer(UserSocket);
+                        roomMap[clientCharacter.playerRoom.name].playersInRoom.Remove(UserSocket);
                         clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.north];
-                        roomMap[clientCharacter.playerRoom.north].addplayer(UserSocket);
+                        roomMap[clientCharacter.playerRoom.name].playersInRoom.Add(UserSocket);
                     }
                     else
                     {
                         if ((input[1].ToLower() == "south") && (clientCharacter.playerRoom.south != null))
                         {
-                            roomMap[clientCharacter.playerRoom.name].removeplayer(UserSocket);
+                            roomMap[clientCharacter.playerRoom.name].playersInRoom.Remove(UserSocket);
                             clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.south];
-                            roomMap[clientCharacter.playerRoom.north].addplayer(UserSocket);
+                            roomMap[clientCharacter.playerRoom.name].addplayer(UserSocket);
                         }
                         else
                         {
                             if ((input[1].ToLower() == "east") && (clientCharacter.playerRoom.east != null))
                             {
-                                roomMap[clientCharacter.playerRoom.name].removeplayer(UserSocket);
+                                roomMap[clientCharacter.playerRoom.name].playersInRoom.Remove(UserSocket);
                                 clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.east];
-                                roomMap[clientCharacter.playerRoom.north].addplayer(UserSocket);
+                                roomMap[clientCharacter.playerRoom.name].addplayer(UserSocket);
                             }
                             else
                             {
                                 if ((input[1].ToLower() == "west") && (clientCharacter.playerRoom.west != null))
                                 {
-                                    roomMap[clientCharacter.playerRoom.name].removeplayer(UserSocket);
+                                    roomMap[clientCharacter.playerRoom.name].playersInRoom.Remove(UserSocket);
                                     clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.west];
-                                    roomMap[clientCharacter.playerRoom.north].addplayer(UserSocket);
+                                    roomMap[clientCharacter.playerRoom.name].addplayer(UserSocket);
                                 }
                                 else
                                 {
                                     if ((input[1].ToLower() == "up") && (clientCharacter.playerRoom.up != null))
                                     {
-                                        roomMap[clientCharacter.playerRoom.name].removeplayer(UserSocket);
+                                        roomMap[clientCharacter.playerRoom.name].playersInRoom.Remove(UserSocket);
                                         clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.up];
-                                        roomMap[clientCharacter.playerRoom.north].addplayer(UserSocket);
+                                        roomMap[clientCharacter.playerRoom.name].addplayer(UserSocket);
                                     }
                                     else
                                     {
                                         if ((input[1].ToLower() == "down") && (clientCharacter.playerRoom.down != null))
                                         {
-                                            roomMap[clientCharacter.playerRoom.name].removeplayer(UserSocket);
+                                            roomMap[clientCharacter.playerRoom.name].playersInRoom.Remove(UserSocket);
                                             clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.down];
-                                            roomMap[clientCharacter.playerRoom.north].addplayer(UserSocket);
+                                            roomMap[clientCharacter.playerRoom.name].addplayer(UserSocket);
                                         }
                                         else
                                         {
@@ -239,7 +239,10 @@ namespace server
                     break;
             }
 
-            returnMessage += "There are " + roomMap[clientCharacter.playerRoom.name].playersInRoom.Count() + " people in this room";
+            int playercounter = roomMap[clientCharacter.playerRoom.name].playersInRoom.Count();
+            playercounter -= 1;
+
+            returnMessage += "There are " + playercounter + " other people in this room";
 
            sendbuffer = encoder.GetBytes(returnMessage);
 
