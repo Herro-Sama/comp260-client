@@ -42,6 +42,19 @@ namespace Client
                 }
 
             }
+		
+	while (connected == false) 
+		{
+			try 
+			{
+				s.Connect (ipLocal);
+				connected = true;
+			} 
+			catch (Exception) 
+			{
+				Thread.Sleep (1000);
+			}
+		}
         }
 
 
