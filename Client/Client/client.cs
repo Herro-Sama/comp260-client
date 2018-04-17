@@ -11,11 +11,14 @@ namespace Client
 {
     class client
     {
+
         static void clientRecieve(object o)
         {
             bool ServerConnection = true;
 
             Socket morseClient = (Socket)o;
+
+            IPEndPoint ipLocal = new IPEndPoint(IPAddress.Parse("138.68.182.55"), 8221);
 
             while (ServerConnection == true)
             {
@@ -43,18 +46,18 @@ namespace Client
 
             }
 		
-	while (connected == false) 
-		{
-			try 
-			{
-				s.Connect (ipLocal);
-				connected = true;
-			} 
-			catch (Exception) 
-			{
-				Thread.Sleep (1000);
-			}
-		}
+	        while (ServerConnection == false) 
+		    {
+		    	try 
+		    	{
+	    			morseClient.Connect (ipLocal);
+                    ServerConnection = true;
+	    		} 
+	    		catch (Exception) 
+	    		{
+	    			Thread.Sleep (1000);
+	    		}
+	    	}
         }
 
 
@@ -62,7 +65,7 @@ namespace Client
         {
             Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-            IPEndPoint ipLocal = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8221);
+            IPEndPoint ipLocal = new IPEndPoint(IPAddress.Parse("138.68.182.55"), 8221);
 
 			bool connected = false;
 
