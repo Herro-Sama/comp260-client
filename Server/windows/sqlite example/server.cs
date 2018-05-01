@@ -61,7 +61,7 @@ namespace server
                 try
                 {
                     int result = receiveInfo.socket.Receive(buffer);
-                   
+
 
                     if (result > 0)
                     {
@@ -111,7 +111,7 @@ namespace server
                 MudowRun.RoomInfo(ThreadLaunchInfo.clientCharacter, ThreadLaunchInfo.socket);
 
                 connectedClients.Add(clientID, ThreadLaunchInfo);
-                    
+
                 myThread.Start(ThreadLaunchInfo);
 
                 ID++;
@@ -125,22 +125,20 @@ namespace server
             Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             IPEndPoint ipLocal = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8221);
-			
+
             s.Bind(ipLocal);
             s.Listen(4);
 
             sqliteConnection connection;
-
+            sqliteCommand command;
 
             try
             {
                 connection = new sqliteConnection("Data Source=" + databaseName + ";Version=3;FailIfMissing=True");
 
-                if (connectedClients == null)
+                if (connection != null)
                 {
                     sqliteConnection.CreateFile(databaseName);
-
-                    sqliteCommand command;
 
                     connection.Open();
 
@@ -148,16 +146,59 @@ namespace server
 
                     command.ExecuteNonQuery();
 
-
                     connection = new sqliteConnection("Data Source=" + databaseName + ";Version=3;FailIfMissing=True");
+
                 }
 
+                try
+                {
+                    Console.WriteLine("enter name");
+                    var name = Console.ReadLine();
 
+                    Console.WriteLine("enter number:");
+                    var phoneNo = Console.ReadLine();
+
+                    connection.Open();
+
+                    command = new sqliteCommand("select * from  table_phonenumbers where name == '" + name + "'", connection);
+                    var reader = command.ExecuteReader();
+
+                    if (reader.HasRows == false)
+                    {
+                        try
+                        {
+                            var sql = "insert into " + "table_phonenumbers" + " (name, number) values ";
+                            sql += "('" + name + "'";
+                            sql += ",";
+                            sql += "'" + phoneNo + "'";
+                            sql += ")";
+
+                            command = new sqliteCommand(sql, connection);
+                            command.ExecuteNonQuery();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Failed to add: " + name + " : " + phoneNo + " to DB " + ex);
+                        }
+                    }
+
+                    else
+                    {
+                        Console.WriteLine("User: " + name + " in DB already");
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Failed to add to DB " + ex);
+                }
             }
+
             catch (Exception ex)
             {
                 Console.WriteLine("Failed to create a new Database: " + ex);
             }
+           
 
             MudowRun.Init();
 

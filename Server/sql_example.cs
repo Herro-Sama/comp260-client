@@ -90,25 +90,25 @@ using sqliteDataReader = System.Data.SQLite.SQLiteDataReader;
 //                                Console.WriteLine("enter name");
 //                                var name = Console.ReadLine();
 
-//                                Console.WriteLine("enter number:");
+//Console.WriteLine("enter number:");
 //                                var phoneNo = Console.ReadLine();
 
-                                
-//								var command = new sqliteCommand("select * from  table_phonenumbers where name == '" + name + "'", conn);
-//                                var reader = command.ExecuteReader();
+
+//var command = new sqliteCommand("select * from  table_phonenumbers where name == '" + name + "'", conn);
+//var reader = command.ExecuteReader();
 
 //                                if (reader.HasRows == false)
 //                                {
 //                                    try
 //                                    {
 //                                        var sql = "insert into " + "table_phonenumbers" + " (name, number) values ";
-//                                        sql += "('" + name + "'";
+//sql += "('" + name + "'";
 //                                        sql += ",";
 //                                        sql += "'" + phoneNo + "'";
 //                                        sql += ")";
 
 //										command = new sqliteCommand(sql, conn);
-//                                        command.ExecuteNonQuery();
+//command.ExecuteNonQuery();
 //                                    }
 //                                    catch(Exception ex)
 //                                    {
