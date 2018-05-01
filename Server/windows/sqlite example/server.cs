@@ -142,7 +142,7 @@ namespace server
 
                     connection.Open();
 
-                    command = new sqliteCommand("create table table_phonenumbers (name varchar(20), number int )", connection);
+                    command = new sqliteCommand("create table table_phonenumbers (name varchar(20), number int)", connection);
 
                     command.ExecuteNonQuery();
 
@@ -167,7 +167,7 @@ namespace server
                     {
                         try
                         {
-                            var sql = "insert into " + "table_phonenumbers" + " (name, number) values ";
+                            var sql = "insert into " + "table_phonenumbers" + " (name, number) values";
                             sql += "('" + name + "'";
                             sql += ",";
                             sql += "'" + phoneNo + "'";
