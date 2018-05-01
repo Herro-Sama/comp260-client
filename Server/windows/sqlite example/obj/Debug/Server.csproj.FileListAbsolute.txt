@@ -1,0 +1,16 @@
+D:\BSC_TEMP\comp260-client\Server\windows\sqlite example\obj\Debug\Server.csprojResolveAssemblyReference.cache
+D:\BSC_TEMP\comp260-client\Server\windows\sqlite example\obj\Debug\Server.csproj.CoreCompileInputs.cache
+D:\BSC_TEMP\comp260-client\Server\windows\sqlite example\bin\Debug\sqlite example.exe.config
+D:\BSC_TEMP\comp260-client\Server\windows\sqlite example\bin\Debug\sqlite example.exe
+D:\BSC_TEMP\comp260-client\Server\windows\sqlite example\bin\Debug\sqlite example.pdb
+D:\BSC_TEMP\comp260-client\Server\windows\sqlite example\bin\Debug\EntityFramework.dll
+D:\BSC_TEMP\comp260-client\Server\windows\sqlite example\bin\Debug\EntityFramework.SqlServer.dll
+D:\BSC_TEMP\comp260-client\Server\windows\sqlite example\bin\Debug\System.Data.SQLite.dll
+D:\BSC_TEMP\comp260-client\Server\windows\sqlite example\bin\Debug\System.Data.SQLite.EF6.dll
+D:\BSC_TEMP\comp260-client\Server\windows\sqlite example\bin\Debug\System.Data.SQLite.Linq.dll
+D:\BSC_TEMP\comp260-client\Server\windows\sqlite example\bin\Debug\EntityFramework.xml
+D:\BSC_TEMP\comp260-client\Server\windows\sqlite example\bin\Debug\EntityFramework.SqlServer.xml
+D:\BSC_TEMP\comp260-client\Server\windows\sqlite example\bin\Debug\System.Data.SQLite.xml
+D:\BSC_TEMP\comp260-client\Server\windows\sqlite example\bin\Debug\System.Data.SQLite.dll.config
+D:\BSC_TEMP\comp260-client\Server\windows\sqlite example\obj\Debug\sqlite example.exe
+D:\BSC_TEMP\comp260-client\Server\windows\sqlite example\obj\Debug\sqlite example.pdb
