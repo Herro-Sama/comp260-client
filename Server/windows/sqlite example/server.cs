@@ -32,8 +32,6 @@ namespace server
 
         static string databaseName = "database.database";
 
-
-
         class ReceiveThreadLaunchInfo
         {
             public ReceiveThreadLaunchInfo(int ID, Socket socket, Character newCharacter)
@@ -135,38 +133,40 @@ namespace server
 
             connection = new sqliteConnection("Data Source=" + databaseName + ";Version=3;FailIfMissing=True");
 
-            sqliteConnection.CreateFile(databaseName);
+            try
+            {
+                connection.Open();
+            }
 
-            command = new sqliteCommand("create table table_users (login varchar(20), password varchar(200), salt varchar(200))", connection);
+            catch (Exception ex)
+            {
 
-            command = new sqliteCommand("create table table_characters (name varchar(18), room varchar(20))", connection);
+                sqliteConnection.CreateFile(databaseName);
 
+                connection = new sqliteConnection("Data Source=" + databaseName + ";Version=3;FailIfMissing=True");
+
+                connection.Open();
+
+                command = new sqliteCommand("create table table_users (login varchar(20), password varchar(200), salt varchar(200), player varchar(20))", connection);
+
+                command.ExecuteNonQuery();
+
+                command = new sqliteCommand("create table table_characters (name varchar(18), room varchar(20))", connection);
+
+                command.ExecuteNonQuery();
+
+                command = new sqliteCommand("create table table_dungeon (name varchar(20), description varchar(200), north varchar(20), south varchar(20), east varchar(20), west varchar(20), up varchar(20), down varchar(20))", connection);
+
+                command.ExecuteNonQuery();
+
+                connection.Close();
+
+            }
 
             MudowRun.Init(databaseName, connection);
 
 
-            try
-            {
-                Console.WriteLine("");
-                command = new sqliteCommand("select * from " + "table_dungeon" + " order by name asc", connection);
-                var reader = command.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    Console.WriteLine("Name: " + reader["name"] + reader["description"] + reader["north"] + reader["south"] + reader["east"] + reader["west"] + reader["up"] + reader["down"]);
-                }
-
-                reader.Close();
-                Console.WriteLine("");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Failed to display DB" + ex);
-            }
-
-
-
-        //Console.WriteLine("Waiting for client ...");
+        Console.WriteLine("Waiting for client ...");
 
         var myThread = new Thread(acceptClientThread);
             myThread.Start(s);

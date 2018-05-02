@@ -35,14 +35,12 @@ namespace server
 
         public void Init(string database, sqliteConnection connection)
         {
+
             connection.Open();
 
-            command = new sqliteCommand("create table table_dungeon (name varchar(20), description varchar(200), north varchar(20), south varchar(20), east varchar(20), west varchar(20), up varchar(20), down varchar(20))", connection);
-
-            command.ExecuteNonQuery();            
 
         {
-            var room = new Room("A1 Roof", "You find yourself on the roof of the apartment building. \n The view is pretty spectacular but it is not going help you complete your mission.\n ");
+            var room = new Room("A1 Roof", "You find yourself on the roof of the apartment building. The view is pretty spectacular but it is not going help you complete your mission. ");
             room.south = "A1 Stairwell 4F";
             var sql = "insert into " + "table_dungeon" + " (name, description, north, south, east, west, up, down) values";
             sql += "('" + room.name + "'";
@@ -63,7 +61,7 @@ namespace server
             sql += ")";
             command = new sqliteCommand(sql, connection);
             command.ExecuteNonQuery();
-            Console.WriteLine(room.name + " Added Successfully");
+         
         }
 
         {
@@ -89,7 +87,7 @@ namespace server
                 sql += ")";
                 command = new sqliteCommand(sql, connection);
                 command.ExecuteNonQuery();
-                Console.WriteLine(room.name + " Added Successfully");
+               
             }
 
         {
@@ -116,7 +114,7 @@ namespace server
                 sql += ")";
                 command = new sqliteCommand(sql, connection);
                 command.ExecuteNonQuery();
-                Console.WriteLine(room.name + " Added Successfully");
+               
             }
 
         {
@@ -142,11 +140,11 @@ namespace server
                 sql += ")";
                 command = new sqliteCommand(sql, connection);
                 command.ExecuteNonQuery();
-                Console.WriteLine(room.name + " Added Successfully");
+                
             }
 
         {
-            var room = new Room("A1 Safe House", "You awake in the safe house. \nYou know your mission was to destroy the research data being kept at Renraku Corp R&D lab.");
+            var room = new Room("A1 Safe House", "You awake in the safe house. You know your mission was to destroy the research data being kept at Renraku Corp R&D lab.");
             room.south = "A1 Hall 3F";
                 var sql = "insert into " + "table_dungeon" + " (name, description, north, south, east, west, up, down) values";
                 sql += "('" + room.name + "'";
@@ -167,7 +165,7 @@ namespace server
                 sql += ")";
                 command = new sqliteCommand(sql, connection);
                 command.ExecuteNonQuery();
-                Console.WriteLine(room.name + " Added Successfully");
+                
             }
 
         {
@@ -194,7 +192,7 @@ namespace server
                 sql += ")";
                 command = new sqliteCommand(sql, connection);
                 command.ExecuteNonQuery();
-                Console.WriteLine(room.name + " Added Successfully");
+                
             }
 
         {
@@ -219,7 +217,7 @@ namespace server
                 sql += ")";
                 command = new sqliteCommand(sql, connection);
                 command.ExecuteNonQuery();
-                Console.WriteLine(room.name + " Added Successfully");
+                
             }
 
         {
@@ -245,7 +243,7 @@ namespace server
                 sql += ")";
                 command = new sqliteCommand(sql, connection);
                 command.ExecuteNonQuery();
-                Console.WriteLine(room.name + " Added Successfully");
+                
             }
 
         {
@@ -271,7 +269,7 @@ namespace server
                 sql += ")";
                 command = new sqliteCommand(sql, connection);
                 command.ExecuteNonQuery();
-                Console.WriteLine(room.name + " Added Successfully");
+                
             }
 
         {
@@ -296,13 +294,13 @@ namespace server
                 sql += ")";
                 command = new sqliteCommand(sql, connection);
                 command.ExecuteNonQuery();
-                Console.WriteLine(room.name + " Added Successfully");
+                
             }
 
+            connection.Close();
 
-
-        //spawnRoom = roomMap["A1 Safe House"];
-    }
+            //spawnRoom = roomMap["A1 Safe House"];
+        }
 
         public Room SetRoom()
         {
@@ -331,8 +329,17 @@ namespace server
 
             while (dungeonSearch.Read())
             {
+               
+                Console.WriteLine("-------------------------------");
                 Console.WriteLine("Name: " + dungeonSearch["name"]);
-                Console.WriteLine(dungeonSearch["description"]);
+                Console.WriteLine("Description: " + dungeonSearch["description"]);
+                Console.WriteLine("North: " + dungeonSearch["North"]);
+                Console.WriteLine("South: " + dungeonSearch["South"]);
+                Console.WriteLine("East: " + dungeonSearch["East"]);
+                Console.WriteLine("West: " + dungeonSearch["West"]);
+                Console.WriteLine("Up: " + dungeonSearch["Up"]);
+                Console.WriteLine("Down: " + dungeonSearch["Down"]);
+                Console.WriteLine("-------------------------------");
 
 
             }
