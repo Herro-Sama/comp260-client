@@ -13,6 +13,12 @@ namespace server
         {
             this.desc = desc;
             this.name = name;
+            this.north = " ";
+            this.south = " ";
+            this.east = " ";
+            this.west = " ";
+            this.up = " ";
+            this.down = " ";
         }
 
         public String north

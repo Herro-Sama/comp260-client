@@ -26,107 +26,354 @@ namespace server
     {        
         Dictionary<String, Room> roomMap;
 
+
+
         Room spawnRoom;
 
-        public void Init()
+        sqliteCommand command;
+
+
+        public void Init(string database, sqliteConnection connection)
         {
-            roomMap = new Dictionary<string, Room>();
-            {
-                var room = new Room("A1 Roof", "You find yourself on the roof of the apartment building. \n The view is pretty spectacular but it won't help you complete your mission.\n ");
-                room.south = "A1 Stairwell 4F";
-                roomMap.Add(room.name, room);
-            }
+            connection.Open();
 
-            {
-                var room = new Room("A1 Stairwell 4F", "This is the fourth floor stairwell, it leads to the roof.");
-                room.north = "A1 Roof";
-                room.down = "A1 Stairwell 3F";
-                roomMap.Add(room.name, room);
-            }
+            command = new sqliteCommand("create table table_dungeon (name varchar(20), description varchar(200), north varchar(20), south varchar(20), east varchar(20), west varchar(20), up varchar(20), down varchar(20))", connection);
 
-            {
-                var room = new Room("A1 Stairwell 3F", "This is the third floor stairwell, this is the floor for the safe house.");
-                room.north = "A1 Hall 3F";
-                room.up = "A1 Stairwell 4F";
-                room.down = "A1 Stairwell 2F";
-                roomMap.Add(room.name, room);
-            }
+            command.ExecuteNonQuery();            
 
-            {
-                var room = new Room("A1 Hall 3F", "This is the third floor hallway, it has rooms numbered from 20 - 30. The safe house is in room 23.");
-                room.north = "A1 Safe House";
-                room.south = "A1 Stairwell 3F";
-                roomMap.Add(room.name, room);
-            }
-
-            {
-                var room = new Room("A1 Safe House", "You awake in the safe house. \nYou know your mission was to destroy the research data being kept at Renraku Corp R&D lab.");
-                room.south = "A1 Hall 3F";
-                roomMap.Add(room.name, room);
-            }
-
-            {
-                var room = new Room("A1 Stairwell 2F", "This is the second floor stairwell.");
-                room.north = "A1 Hall 2F";
-                room.up = "A1 Stairwell 3F";
-                room.down = "A1 Stairwell 1F";
-                roomMap.Add(room.name, room);
-            }
-
-            {
-                var room = new Room("A1 Hall 2F", "This is the second floor hallway, rooms numbered 1 - 19 are here. Nothing of interest though should probably get back to my mission.");
-                room.south = "A1 Stairwell 2F";
-                roomMap.Add(room.name, room);
-            }
-
-            {
-                var room = new Room("A1 Stairwell 1F", "This is the ground floor stairwell.");
-                room.north = "A1 Hall 1F";
-                room.up = "A1 Stairwell 2F";
-                roomMap.Add(room.name, room);
-            }
-
-            {
-                var room = new Room("A1 Hall 1F", "This is the ground floor hallway, nothing but reception to be found here.");
-                room.south = "A1 Stairwell 2F";
-                room.north = "Outside South";
-                roomMap.Add(room.name, room);
-            }
-
-            {
-                var room = new Room("Outside South", "Finally I'm outside, now to get to the R&D lab to destroy that data.");
-                room.south = "A1 Stairwell 2F";
-                roomMap.Add(room.name, room);
-            }
-
-
-
-            spawnRoom = roomMap["A1 Safe House"];
+        {
+            var room = new Room("A1 Roof", "You find yourself on the roof of the apartment building. \n The view is pretty spectacular but it is not going help you complete your mission.\n ");
+            room.south = "A1 Stairwell 4F";
+            var sql = "insert into " + "table_dungeon" + " (name, description, north, south, east, west, up, down) values";
+            sql += "('" + room.name + "'";
+            sql += ",";
+            sql += "'" + room.desc + "'";
+            sql += ",";
+            sql += "'" + room.north + "'";
+            sql += ",";
+            sql += "'" + room.south + "'";
+            sql += ",";
+            sql += "'" + room.east + "'";
+            sql += ",";
+            sql += "'" + room.west + "'";
+            sql += ",";
+            sql += "'" + room.up + "'";
+            sql += ",";
+            sql += "'" + room.down + "'";
+            sql += ")";
+            command = new sqliteCommand(sql, connection);
+            command.ExecuteNonQuery();
+            Console.WriteLine(room.name + " Added Successfully");
         }
+
+        {
+            var room = new Room("A1 Stairwell 4F", "This is the fourth floor stairwell, it leads to the roof.");
+            room.north = "A1 Roof";
+            room.down = "A1 Stairwell 3F";
+                var sql = "insert into " + "table_dungeon" + " (name, description, north, south, east, west, up, down) values";
+                sql += "('" + room.name + "'";
+                sql += ",";
+                sql += "'" + room.desc + "'";
+                sql += ",";
+                sql += "'" + room.north + "'";
+                sql += ",";
+                sql += "'" + room.south + "'";
+                sql += ",";
+                sql += "'" + room.east + "'";
+                sql += ",";
+                sql += "'" + room.west + "'";
+                sql += ",";
+                sql += "'" + room.up + "'";
+                sql += ",";
+                sql += "'" + room.down + "'";
+                sql += ")";
+                command = new sqliteCommand(sql, connection);
+                command.ExecuteNonQuery();
+                Console.WriteLine(room.name + " Added Successfully");
+            }
+
+        {
+            var room = new Room("A1 Stairwell 3F", "This is the third floor stairwell, this is the floor for the safe house.");
+            room.north = "A1 Hall 3F";
+            room.up = "A1 Stairwell 4F";
+            room.down = "A1 Stairwell 2F";
+                var sql = "insert into " + "table_dungeon" + " (name, description, north, south, east, west, up, down) values";
+                sql += "('" + room.name + "'";
+                sql += ",";
+                sql += "'" + room.desc + "'";
+                sql += ",";
+                sql += "'" + room.north + "'";
+                sql += ",";
+                sql += "'" + room.south + "'";
+                sql += ",";
+                sql += "'" + room.east + "'";
+                sql += ",";
+                sql += "'" + room.west + "'";
+                sql += ",";
+                sql += "'" + room.up + "'";
+                sql += ",";
+                sql += "'" + room.down + "'";
+                sql += ")";
+                command = new sqliteCommand(sql, connection);
+                command.ExecuteNonQuery();
+                Console.WriteLine(room.name + " Added Successfully");
+            }
+
+        {
+            var room = new Room("A1 Hall 3F", "This is the third floor hallway, it has rooms numbered from 20 - 30. The safe house is in room 23.");
+            room.north = "A1 Safe House";
+            room.south = "A1 Stairwell 3F";
+                var sql = "insert into " + "table_dungeon" + " (name, description, north, south, east, west, up, down) values";
+                sql += "('" + room.name + "'";
+                sql += ",";
+                sql += "'" + room.desc + "'";
+                sql += ",";
+                sql += "'" + room.north + "'";
+                sql += ",";
+                sql += "'" + room.south + "'";
+                sql += ",";
+                sql += "'" + room.east + "'";
+                sql += ",";
+                sql += "'" + room.west + "'";
+                sql += ",";
+                sql += "'" + room.up + "'";
+                sql += ",";
+                sql += "'" + room.down + "'";
+                sql += ")";
+                command = new sqliteCommand(sql, connection);
+                command.ExecuteNonQuery();
+                Console.WriteLine(room.name + " Added Successfully");
+            }
+
+        {
+            var room = new Room("A1 Safe House", "You awake in the safe house. \nYou know your mission was to destroy the research data being kept at Renraku Corp R&D lab.");
+            room.south = "A1 Hall 3F";
+                var sql = "insert into " + "table_dungeon" + " (name, description, north, south, east, west, up, down) values";
+                sql += "('" + room.name + "'";
+                sql += ",";
+                sql += "'" + room.desc + "'";
+                sql += ",";
+                sql += "'" + room.north + "'";
+                sql += ",";
+                sql += "'" + room.south + "'";
+                sql += ",";
+                sql += "'" + room.east + "'";
+                sql += ",";
+                sql += "'" + room.west + "'";
+                sql += ",";
+                sql += "'" + room.up + "'";
+                sql += ",";
+                sql += "'" + room.down + "'";
+                sql += ")";
+                command = new sqliteCommand(sql, connection);
+                command.ExecuteNonQuery();
+                Console.WriteLine(room.name + " Added Successfully");
+            }
+
+        {
+            var room = new Room("A1 Stairwell 2F", "This is the second floor stairwell.");
+            room.north = "A1 Hall 2F";
+            room.up = "A1 Stairwell 3F";
+            room.down = "A1 Stairwell 1F";
+                var sql = "insert into " + "table_dungeon" + " (name, description, north, south, east, west, up, down) values";
+                sql += "('" + room.name + "'";
+                sql += ",";
+                sql += "'" + room.desc + "'";
+                sql += ",";
+                sql += "'" + room.north + "'";
+                sql += ",";
+                sql += "'" + room.south + "'";
+                sql += ",";
+                sql += "'" + room.east + "'";
+                sql += ",";
+                sql += "'" + room.west + "'";
+                sql += ",";
+                sql += "'" + room.up + "'";
+                sql += ",";
+                sql += "'" + room.down + "'";
+                sql += ")";
+                command = new sqliteCommand(sql, connection);
+                command.ExecuteNonQuery();
+                Console.WriteLine(room.name + " Added Successfully");
+            }
+
+        {
+            var room = new Room("A1 Hall 2F", "This is the second floor hallway, rooms numbered 1 - 19 are here. Nothing of interest though should probably get back to my mission.");
+            room.south = "A1 Stairwell 2F";
+                var sql = "insert into " + "table_dungeon" + " (name, description, north, south, east, west, up, down) values";
+                sql += "('" + room.name + "'";
+                sql += ",";
+                sql += "'" + room.desc + "'";
+                sql += ",";
+                sql += "'" + room.north + "'";
+                sql += ",";
+                sql += "'" + room.south + "'";
+                sql += ",";
+                sql += "'" + room.east + "'";
+                sql += ",";
+                sql += "'" + room.west + "'";
+                sql += ",";
+                sql += "'" + room.up + "'";
+                sql += ",";
+                sql += "'" + room.down + "'";
+                sql += ")";
+                command = new sqliteCommand(sql, connection);
+                command.ExecuteNonQuery();
+                Console.WriteLine(room.name + " Added Successfully");
+            }
+
+        {
+            var room = new Room("A1 Stairwell 1F", "This is the ground floor stairwell.");
+            room.north = "A1 Hall 1F";
+            room.up = "A1 Stairwell 2F";
+                var sql = "insert into " + "table_dungeon" + " (name, description, north, south, east, west, up, down) values";
+                sql += "('" + room.name + "'";
+                sql += ",";
+                sql += "'" + room.desc + "'";
+                sql += ",";
+                sql += "'" + room.north + "'";
+                sql += ",";
+                sql += "'" + room.south + "'";
+                sql += ",";
+                sql += "'" + room.east + "'";
+                sql += ",";
+                sql += "'" + room.west + "'";
+                sql += ",";
+                sql += "'" + room.up + "'";
+                sql += ",";
+                sql += "'" + room.down + "'";
+                sql += ")";
+                command = new sqliteCommand(sql, connection);
+                command.ExecuteNonQuery();
+                Console.WriteLine(room.name + " Added Successfully");
+            }
+
+        {
+            var room = new Room("A1 Hall 1F", "This is the ground floor hallway, nothing but reception to be found here.");
+            room.south = "A1 Stairwell 2F";
+            room.north = "Outside South";
+                var sql = "insert into " + "table_dungeon" + " (name, description, north, south, east, west, up, down) values";
+                sql += "('" + room.name + "'";
+                sql += ",";
+                sql += "'" + room.desc + "'";
+                sql += ",";
+                sql += "'" + room.north + "'";
+                sql += ",";
+                sql += "'" + room.south + "'";
+                sql += ",";
+                sql += "'" + room.east + "'";
+                sql += ",";
+                sql += "'" + room.west + "'";
+                sql += ",";
+                sql += "'" + room.up + "'";
+                sql += ",";
+                sql += "'" + room.down + "'";
+                sql += ")";
+                command = new sqliteCommand(sql, connection);
+                command.ExecuteNonQuery();
+                Console.WriteLine(room.name + " Added Successfully");
+            }
+
+        {
+            var room = new Room("Outside South", "Finally I am outside, now to get to the R&D lab to destroy that data.");
+            room.south = "A1 Stairwell 2F";
+                var sql = "insert into " + "table_dungeon" + " (name, description, north, south, east, west, up, down) values";
+                sql += "('" + room.name + "'";
+                sql += ",";
+                sql += "'" + room.desc + "'";
+                sql += ",";
+                sql += "'" + room.north + "'";
+                sql += ",";
+                sql += "'" + room.south + "'";
+                sql += ",";
+                sql += "'" + room.east + "'";
+                sql += ",";
+                sql += "'" + room.west + "'";
+                sql += ",";
+                sql += "'" + room.up + "'";
+                sql += ",";
+                sql += "'" + room.down + "'";
+                sql += ")";
+                command = new sqliteCommand(sql, connection);
+                command.ExecuteNonQuery();
+                Console.WriteLine(room.name + " Added Successfully");
+            }
+
+
+
+        //spawnRoom = roomMap["A1 Safe House"];
+    }
 
         public Room SetRoom()
         {
            return spawnRoom;
         }
 
-        public void RoomInfo(Character clientCharacter, Socket UserSocket)
+
+        public void RoomInfo(Socket UserSocket, SQLiteConnection connection, Dictionary<Socket, Character> clientDictonary)
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
             string returnMessage = "";
 
-            returnMessage += (clientCharacter.playerRoom.desc);
-            returnMessage += ("Exits");
-            for (var i = 0; i < clientCharacter.playerRoom.exits.Length; i++)
+            Character character = clientDictonary[UserSocket];
+
+            command = new sqliteCommand("select * from " + "table_characters" + " where name == " + "'" + character.name + "'", connection);
+
+            var characterSearch = command.ExecuteReader();
+
+            while(characterSearch.Read())
             {
-                if (clientCharacter.playerRoom.exits[i] != null)
-                {
-                    returnMessage += (Room.exitNames[i] + " ");
-                }
+                command = new sqliteCommand("select * from " + "table_dungeon" + " where Room == " + "'" + characterSearch["Room"] + "'", connection);
             }
+            characterSearch.Close();
+
+            var dungeonSearch = command.ExecuteReader();
+
+            while (dungeonSearch.Read())
+            {
+                Console.WriteLine("Name: " + dungeonSearch["name"]);
+                Console.WriteLine(dungeonSearch["description"]);
+
+
+            }
+
+
+
+            //returnMessage += (clientCharacter.playerRoom.desc);
+            //returnMessage += ("Exits");
+            //for (var i = 0; i < clientCharacter.playerRoom.exits.Length; i++)
+            //{
+            //    if (clientCharacter.playerRoom.exits[i] != null)
+            //    {
+            //        returnMessage += (Room.exitNames[i] + " ");
+            //    }
+            //}
 
             byte[] sendbuffer = encoder.GetBytes(returnMessage);
 
             int bytesSent = UserSocket.Send(sendbuffer);
+
+
+            try
+            {
+                Console.WriteLine("");
+                command = new sqliteCommand("select * from " + "table_dungeon" + " order by name asc", connection);
+                var reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Console.WriteLine("Name: " + reader["name"]);
+                }
+
+                reader.Close();
+                Console.WriteLine("");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed to display DB" + ex);
+            }
+
+
 
         }
 

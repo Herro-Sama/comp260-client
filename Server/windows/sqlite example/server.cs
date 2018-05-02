@@ -71,7 +71,7 @@ namespace server
                         {
                             string message = encoder.GetString(buffer, 0, result);
                             receiveInfo.clientCharacter.playerRoom = MudowRun.Process(receiveInfo.clientCharacter, message, receiveInfo.socket);
-                            MudowRun.RoomInfo(receiveInfo.clientCharacter, receiveInfo.socket);
+                       //     MudowRun.RoomInfo(receiveInfo.clientCharacter, receiveInfo.socket);
                         }
                     }
                 }
@@ -108,7 +108,7 @@ namespace server
 
                 ThreadLaunchInfo.clientCharacter.SetPlayerRoom(MudowRun.SetRoom(), ThreadLaunchInfo.socket);
 
-                MudowRun.RoomInfo(ThreadLaunchInfo.clientCharacter, ThreadLaunchInfo.socket);
+                //MudowRun.RoomInfo(ThreadLaunchInfo.clientCharacter, ThreadLaunchInfo.socket);
 
                 connectedClients.Add(clientID, ThreadLaunchInfo);
 
@@ -130,81 +130,45 @@ namespace server
             s.Listen(4);
 
             sqliteConnection connection;
+
             sqliteCommand command;
+
+            connection = new sqliteConnection("Data Source=" + databaseName + ";Version=3;FailIfMissing=True");
+
+            sqliteConnection.CreateFile(databaseName);
+
+            command = new sqliteCommand("create table table_users (login varchar(20), password varchar(200), salt varchar(200))", connection);
+
+            command = new sqliteCommand("create table table_characters (name varchar(18), room varchar(20))", connection);
+
+
+            MudowRun.Init(databaseName, connection);
+
 
             try
             {
-                connection = new sqliteConnection("Data Source=" + databaseName + ";Version=3;FailIfMissing=True");
+                Console.WriteLine("");
+                command = new sqliteCommand("select * from " + "table_dungeon" + " order by name asc", connection);
+                var reader = command.ExecuteReader();
 
-                if (connection != null)
+                while (reader.Read())
                 {
-                    sqliteConnection.CreateFile(databaseName);
-
-                    connection.Open();
-
-                    command = new sqliteCommand("create table table_phonenumbers (name varchar(20), number int)", connection);
-
-                    command.ExecuteNonQuery();
-
-                    connection = new sqliteConnection("Data Source=" + databaseName + ";Version=3;FailIfMissing=True");
-
+                    Console.WriteLine("Name: " + reader["name"] + reader["description"] + reader["north"] + reader["south"] + reader["east"] + reader["west"] + reader["up"] + reader["down"]);
                 }
 
-                try
-                {
-                    Console.WriteLine("enter name");
-                    var name = Console.ReadLine();
-
-                    Console.WriteLine("enter number:");
-                    var phoneNo = Console.ReadLine();
-
-                    connection.Open();
-
-                    command = new sqliteCommand("select * from  table_phonenumbers where name == '" + name + "'", connection);
-                    var reader = command.ExecuteReader();
-
-                    if (reader.HasRows == false)
-                    {
-                        try
-                        {
-                            var sql = "insert into " + "table_phonenumbers" + " (name, number) values";
-                            sql += "('" + name + "'";
-                            sql += ",";
-                            sql += "'" + phoneNo + "'";
-                            sql += ")";
-
-                            command = new sqliteCommand(sql, connection);
-                            command.ExecuteNonQuery();
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("Failed to add: " + name + " : " + phoneNo + " to DB " + ex);
-                        }
-                    }
-
-                    else
-                    {
-                        Console.WriteLine("User: " + name + " in DB already");
-                    }
-                }
-
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Failed to add to DB " + ex);
-                }
+                reader.Close();
+                Console.WriteLine("");
             }
-
             catch (Exception ex)
             {
-                Console.WriteLine("Failed to create a new Database: " + ex);
+                Console.WriteLine("Failed to display DB" + ex);
             }
-           
 
-            MudowRun.Init();
 
-            Console.WriteLine("Waiting for client ...");
 
-            var myThread = new Thread(acceptClientThread);
+        //Console.WriteLine("Waiting for client ...");
+
+        var myThread = new Thread(acceptClientThread);
             myThread.Start(s);
 
             int itemsProcessed = 0;

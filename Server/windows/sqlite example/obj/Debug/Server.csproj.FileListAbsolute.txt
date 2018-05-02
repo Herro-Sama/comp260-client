@@ -14,3 +14,19 @@ D:\BSC_TEMP\comp260-client\Server\windows\sqlite example\bin\Debug\System.Data.S
 D:\BSC_TEMP\comp260-client\Server\windows\sqlite example\bin\Debug\System.Data.SQLite.dll.config
 D:\BSC_TEMP\comp260-client\Server\windows\sqlite example\obj\Debug\sqlite example.exe
 D:\BSC_TEMP\comp260-client\Server\windows\sqlite example\obj\Debug\sqlite example.pdb
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\windows\sqlite example\bin\Debug\EntityFramework.dll
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\windows\sqlite example\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\windows\sqlite example\bin\Debug\System.Data.SQLite.dll
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\windows\sqlite example\bin\Debug\System.Data.SQLite.EF6.dll
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\windows\sqlite example\bin\Debug\System.Data.SQLite.Linq.dll
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\windows\sqlite example\bin\Debug\EntityFramework.xml
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\windows\sqlite example\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\windows\sqlite example\bin\Debug\System.Data.SQLite.xml
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\windows\sqlite example\bin\Debug\System.Data.SQLite.dll.config
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\windows\sqlite example\obj\Debug\Server.csprojResolveAssemblyReference.cache
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\windows\sqlite example\obj\Debug\Server.csproj.CoreCompileInputs.cache
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\windows\sqlite example\bin\Debug\Server.exe.config
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\windows\sqlite example\bin\Debug\Server.exe
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\windows\sqlite example\bin\Debug\Server.pdb
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\windows\sqlite example\obj\Debug\Server.exe
+C:\Users\sandy\Documents\Coursework1718\comp260-client\Server\windows\sqlite example\obj\Debug\Server.pdb

@@ -133,7 +133,7 @@ using sqliteDataReader = System.Data.SQLite.SQLiteDataReader;
 //                            {
 //                                Console.WriteLine("");
 //								var command = new sqliteCommand("select * from " + "table_phonenumbers" + " order by name asc", conn);
-//                                var reader = command.ExecuteReader();
+//var reader = command.ExecuteReader();
 
 //                                while (reader.Read())
 //                                {
