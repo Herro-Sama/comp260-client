@@ -5,18 +5,30 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 
+#if TARGET_LINUX
+using Mono.Data.Sqlite;
+using sqliteConnection 	=Mono.Data.Sqlite.SqliteConnection;
+using sqliteCommand 	=Mono.Data.Sqlite.SqliteCommand;
+using sqliteDataReader	=Mono.Data.Sqlite.SqliteDataReader;
+#endif
+
+#if TARGET_WINDOWS
+using System.Data.SQLite;
+using sqliteConnection = System.Data.SQLite.SQLiteConnection;
+using sqliteCommand = System.Data.SQLite.SQLiteCommand;
+using sqliteDataReader = System.Data.SQLite.SQLiteDataReader;
+#endif
+
+using System.Security.Cryptography;
+
 namespace server
 {
     public class Character
     {
-        public Dictionary<string, int> CharacterStats;
-        private int CharacterCreationPoints = 20;
         ASCIIEncoding encoder = new ASCIIEncoding();
 
-
-
         public String name = "";
-        public Room playerRoom;
+        public string playerRoom;
 
         public Character(String name)
         {
@@ -25,51 +37,56 @@ namespace server
             
         }
 
-        public void SetPlayerRoom(Room SpawnRoom, Socket ClientSocket)
+        public void SetPlayerRoom(string SpawnRoom, Socket ClientSocket)
         {
             this.playerRoom = SpawnRoom;
-            SpawnRoom.addplayer(ClientSocket);
         }
 
-        public void CharacterCreation()
+        public bool PlayerLoginDetails(int userState, string userMessage, SQLiteConnection connection)
         {
+            if (userState == 0)
+            {
+                GenerateSalt();
 
 
+
+                return true;
+            }
+
+            if (userState == 1)
+            {
+
+                return true;
+            }
+
+            if (userState == 2)
+            {
+
+                return true;
+            }
+
+            if (userState == 3)
+            {
+
+                return true;
+            }
+
+
+            return false;
         }
 
-        private void SetCharacterBody(int msg)
+        public byte[] GenerateSalt()
         {
-            CharacterStats.Add("Body", msg);
+            var rngCSP = new RNGCryptoServiceProvider();
+
+            byte[] salt = new byte[16];
+
+            rngCSP.GetBytes(salt);
+
+            return salt;
+
         }
 
-        private void SetCharacterAgility(int msg)
-        {
-            CharacterStats.Add("Agility", msg);
-        }
-        private void SetCharacterReaction(int msg)
-        {
-            CharacterStats.Add("Reaction", msg);
-        }
-        private void SetCharacterStrength(int msg)
-        {
-            CharacterStats.Add("Strength", msg);
-        }
-        private void SetCharacterWillpower(int msg)
-        {
-            CharacterStats.Add("Willpower", msg);
-        }
-        private void SetCharacterLogic(int msg)
-        {
-            CharacterStats.Add("Logic", msg);
-        }
-        private void SetCharacterIntuition(int msg)
-        {
-            CharacterStats.Add("Intuition", msg);
-        }
-        private void SetCharacterCharisma(int msg)
-        {
-            CharacterStats.Add("Charisma", msg);
-        }
 
     }
 

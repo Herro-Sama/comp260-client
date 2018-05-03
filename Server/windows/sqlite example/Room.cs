@@ -13,65 +13,46 @@ namespace server
         {
             this.desc = desc;
             this.name = name;
-            this.north = " ";
-            this.south = " ";
-            this.east = " ";
-            this.west = " ";
-            this.up = " ";
-            this.down = " ";
         }
 
         public String north
         {
-            get { return exits[0]; }
-            set { exits[0] = value; }
+            get { return north; }
+            set { north = value; }
         }
 
         public String south
         {
-            get { return exits[1]; }
-            set { exits[1] = value; }
+            get { return north; }
+            set { north = value; }
         }
 
         public String east
         {
-            get { return exits[2]; }
-            set { exits[2] = value; }
+            get { return east; }
+            set { east = value; }
         }
         public String west
         {
-            get { return exits[3]; }
-            set { exits[3] = value; }
+            get { return east; }
+            set { east = value; }
         }
 
         public String up
         {
-            get { return exits[4]; }
-            set { exits[4] = value; }
+            get { return up; }
+            set { up = value; }
         }
 
         public String down
         {
-            get { return exits[5]; }
-            set { exits[5] = value; }
-        }
-
-        public void addplayer(Socket player)
-        {
-            playersInRoom.Add(player);
-        }
-
-        public void removeplayer(Socket player)
-        {
-            playersInRoom.Remove(player);
+            get { return down; }
+            set { down = value; }
         }
 
         public String name = "";
         public String desc = "";
-        public String[] exits = new String[6];
-        public static String[] exitNames = { "NORTH", "SOUTH", "EAST", "WEST", "UP", "DOWN" };
-        public List<Socket> playersInRoom = new List<Socket>();
-       
+               
     }
 
 }

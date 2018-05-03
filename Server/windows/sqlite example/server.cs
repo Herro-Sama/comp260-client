@@ -28,22 +28,27 @@ namespace server
         static bool active = true;
         static LinkedList<string> incommingMessages = new LinkedList<string>();
         static Dictionary<String, ReceiveThreadLaunchInfo> connectedClients = new Dictionary<string, ReceiveThreadLaunchInfo>();
+        static Dictionary<Socket, Character> socketToCharacter = new Dictionary<Socket, Character>();
         static Dungeon MudowRun = new Dungeon();
+
+        static sqliteConnection connection;
 
         static string databaseName = "database.database";
 
         class ReceiveThreadLaunchInfo
         {
-            public ReceiveThreadLaunchInfo(int ID, Socket socket, Character newCharacter)
+            public ReceiveThreadLaunchInfo(int ID, Socket socket, Character newCharacter, int userState)
             {
                 this.ID = ID;
                 this.socket = socket;
                 this.clientCharacter = newCharacter;
+                this.userState = userState;
             }
 
             public int ID;
             public Socket socket;
             public Character clientCharacter;
+            public int userState;
 
         }
 
@@ -68,8 +73,12 @@ namespace server
                         lock (incommingMessages)
                         {
                             string message = encoder.GetString(buffer, 0, result);
-                            receiveInfo.clientCharacter.playerRoom = MudowRun.Process(receiveInfo.clientCharacter, message, receiveInfo.socket);
-                       //     MudowRun.RoomInfo(receiveInfo.clientCharacter, receiveInfo.socket);
+
+                            if (receiveInfo.clientCharacter.PlayerLoginDetails(receiveInfo.userState, message, connection) == false)
+                            {
+                                MudowRun.Process(receiveInfo.clientCharacter, message, receiveInfo.socket, socketToCharacter, connection);
+                            }
+                            MudowRun.RoomInfo(receiveInfo.socket,connection, socketToCharacter);
                         }
                     }
                 }
@@ -77,10 +86,6 @@ namespace server
                 {
                     socketactive = false;
                 }
-
-
-
-
             }
 
 
@@ -102,11 +107,11 @@ namespace server
 
                 var newCharacter = new Character(clientID);
 
-                var ThreadLaunchInfo = new ReceiveThreadLaunchInfo(ID, newClientSocket, newCharacter);
+                var userstate = 0;
+
+                var ThreadLaunchInfo = new ReceiveThreadLaunchInfo(ID, newClientSocket, newCharacter, userstate);
 
                 ThreadLaunchInfo.clientCharacter.SetPlayerRoom(MudowRun.SetRoom(), ThreadLaunchInfo.socket);
-
-                //MudowRun.RoomInfo(ThreadLaunchInfo.clientCharacter, ThreadLaunchInfo.socket);
 
                 connectedClients.Add(clientID, ThreadLaunchInfo);
 
@@ -127,11 +132,9 @@ namespace server
             s.Bind(ipLocal);
             s.Listen(4);
 
-            sqliteConnection connection;
+            connection = new sqliteConnection("Data Source=" + databaseName + ";Version=3;FailIfMissing=True");
 
             sqliteCommand command;
-
-            connection = new sqliteConnection("Data Source=" + databaseName + ";Version=3;FailIfMissing=True");
 
             try
             {
@@ -161,10 +164,9 @@ namespace server
 
                 connection.Close();
 
+                MudowRun.Init(databaseName, connection);
+
             }
-
-            MudowRun.Init(databaseName, connection);
-
 
         Console.WriteLine("Waiting for client ...");
 

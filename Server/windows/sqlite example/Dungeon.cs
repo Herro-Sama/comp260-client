@@ -24,11 +24,7 @@ namespace server
 {
     public class Dungeon
     {        
-        Dictionary<String, Room> roomMap;
-
-
-
-        Room spawnRoom;
+       static string spawnRoom = "A1 Safe House";
 
         sqliteCommand command;
 
@@ -298,11 +294,9 @@ namespace server
             }
 
             connection.Close();
-
-            //spawnRoom = roomMap["A1 Safe House"];
         }
 
-        public Room SetRoom()
+        public string SetRoom()
         {
            return spawnRoom;
         }
@@ -330,31 +324,18 @@ namespace server
             while (dungeonSearch.Read())
             {
                
-                Console.WriteLine("-------------------------------");
-                Console.WriteLine("Name: " + dungeonSearch["name"]);
-                Console.WriteLine("Description: " + dungeonSearch["description"]);
-                Console.WriteLine("North: " + dungeonSearch["North"]);
-                Console.WriteLine("South: " + dungeonSearch["South"]);
-                Console.WriteLine("East: " + dungeonSearch["East"]);
-                Console.WriteLine("West: " + dungeonSearch["West"]);
-                Console.WriteLine("Up: " + dungeonSearch["Up"]);
-                Console.WriteLine("Down: " + dungeonSearch["Down"]);
-                Console.WriteLine("-------------------------------");
-
+                returnMessage += "-------------------------------";
+                returnMessage += "Name: " + dungeonSearch["name"];
+                returnMessage += "Description: " + dungeonSearch["description"];
+                returnMessage += "North: " + dungeonSearch["North"];
+                returnMessage += "South: " + dungeonSearch["South"];
+                returnMessage += "East: " + dungeonSearch["East"];
+                returnMessage += "West: " + dungeonSearch["West"];
+                returnMessage += "Up: " + dungeonSearch["Up"];
+                returnMessage += "Down: " + dungeonSearch["Down"];
+                returnMessage += "-------------------------------";
 
             }
-
-
-
-            //returnMessage += (clientCharacter.playerRoom.desc);
-            //returnMessage += ("Exits");
-            //for (var i = 0; i < clientCharacter.playerRoom.exits.Length; i++)
-            //{
-            //    if (clientCharacter.playerRoom.exits[i] != null)
-            //    {
-            //        returnMessage += (Room.exitNames[i] + " ");
-            //    }
-            //}
 
             byte[] sendbuffer = encoder.GetBytes(returnMessage);
 
@@ -384,9 +365,11 @@ namespace server
 
         }
 
-        public Room Process(Character clientCharacter, String key, Socket UserSocket)
+        public void Process(Character clientCharacter, String key, Socket UserSocket, Dictionary<Socket, Character> clientDictonary, SQLiteConnection connection)
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
+
+            connection.Open();
 
             byte[] sendbuffer;
 
@@ -396,127 +379,100 @@ namespace server
 
             var input = key.Split(' ');
 
-            Console.WriteLine(clientCharacter.name + " just left the following room " + clientCharacter.playerRoom.name);
+            command = new sqliteCommand("select * from " + "table_characters" + " where name == " + "'" + clientCharacter.name + "'", connection);
 
-            switch (input[0].ToLower())
+            var characterSearch = command.ExecuteReader();
+
+            while (characterSearch.Read())
             {
-                case "help":
-                    Console.Clear();
-                    returnMessage += ("\nCommands are ....");
-                    returnMessage += ("\nhelp - for this screen");
-                    returnMessage += ("\nlook - to look around");
-                    returnMessage += ("\ngo [north | south | east | west | up | down]  - to travel between locations");
-                    returnMessage += ("\nPress any key to continue");
-                    Console.ReadKey(true);
-                    break;
 
-                case "look":
-                    //loop straight back
-                    Thread.Sleep(1000);
-                    break;
 
-                case "say":
+                switch (input[0].ToLower())
+                {
+                    case "help":
+                        Console.Clear();
+                        returnMessage += ("\nCommands are ....");
+                        returnMessage += ("\nhelp - for this screen");
+                        returnMessage += ("\nlook - to look around");
+                        returnMessage += ("\ngo [north | south | east | west | up | down]  - to travel between locations");
+                        returnMessage += ("\nPress any key to continue");
+                        Console.ReadKey(true);
+                        break;
 
-                    returnMessage += clientCharacter.name + " said ";
+                    case "look":
+                        //loop straight back
+                        Thread.Sleep(1000);
+                        break;
 
-                    for (var i = 1; i < input.Length; i++)
-                    {
-                        returnMessage += (input[i] + " ");
-                    }
+                    case "say":
 
-                    foreach (Socket player in roomMap[clientCharacter.playerRoom.name].playersInRoom)
-                    {
-                        if (player != UserSocket)
+                        returnMessage += clientCharacter.name + " said ";
+
+                        for (var i = 1; i < input.Length; i++)
                         {
-                            sendbuffer = encoder.GetBytes(returnMessage);
-                            bytesSent = player.Send(sendbuffer);
+                            returnMessage += (input[i] + " ");
                         }
-                    }
-                    Thread.Sleep(1000);
 
-                    break;
+                        command = new sqliteCommand("select * from " + "table_characters" + " where Room == " + "'" + characterSearch["room"] + "'", connection);
 
-                case "go":
-                    // is arg[1] sensible?
-                    if ((input[1].ToLower() == "north") && (clientCharacter.playerRoom.north != null))
-                    {
-                        roomMap[clientCharacter.playerRoom.name].playersInRoom.Remove(UserSocket);
-                        clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.north];
-                        roomMap[clientCharacter.playerRoom.name].playersInRoom.Add(UserSocket);
-                    }
-                    else
-                    {
-                        if ((input[1].ToLower() == "south") && (clientCharacter.playerRoom.south != null))
+
+                        var sameRoomSearch = command.ExecuteReader();
+
+                        while (sameRoomSearch.Read())
                         {
-                            roomMap[clientCharacter.playerRoom.name].playersInRoom.Remove(UserSocket);
-                            clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.south];
-                            roomMap[clientCharacter.playerRoom.name].addplayer(UserSocket);
-                        }
-                        else
-                        {
-                            if ((input[1].ToLower() == "east") && (clientCharacter.playerRoom.east != null))
+                            if (sameRoomSearch["name"] != UserSocket)
                             {
-                                roomMap[clientCharacter.playerRoom.name].playersInRoom.Remove(UserSocket);
-                                clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.east];
-                                roomMap[clientCharacter.playerRoom.name].addplayer(UserSocket);
+                                sendbuffer = encoder.GetBytes(returnMessage);
+                                // bytesSent = player.Send(sendbuffer);
                             }
+                        }
+                        Thread.Sleep(1000);
+
+                        break;
+
+                    case "go":
+
+                        command = new sqliteCommand("select * from " + "table_dungeon" + " where name == " + "'" + characterSearch["room"] + "'", connection);
+
+                        var dungeonSearch = command.ExecuteReader();
+
+                        while (dungeonSearch.Read())
+                        {
+
+
+                            // is arg[1] sensible?
+                            if ((input[1].ToLower() != null) && (dungeonSearch["north"] != null))
+                            {
+                                command = new sqliteCommand("update table_characters set room = " + "'" + dungeonSearch["north"] + "'" + " where name = " + "'" + characterSearch["name"] + "'", connection);
+                            }
+
                             else
                             {
-                                if ((input[1].ToLower() == "west") && (clientCharacter.playerRoom.west != null))
-                                {
-                                    roomMap[clientCharacter.playerRoom.name].playersInRoom.Remove(UserSocket);
-                                    clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.west];
-                                    roomMap[clientCharacter.playerRoom.name].addplayer(UserSocket);
-                                }
-                                else
-                                {
-                                    if ((input[1].ToLower() == "up") && (clientCharacter.playerRoom.up != null))
-                                    {
-                                        roomMap[clientCharacter.playerRoom.name].playersInRoom.Remove(UserSocket);
-                                        clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.up];
-                                        roomMap[clientCharacter.playerRoom.name].addplayer(UserSocket);
-                                    }
-                                    else
-                                    {
-                                        if ((input[1].ToLower() == "down") && (clientCharacter.playerRoom.down != null))
-                                        {
-                                            roomMap[clientCharacter.playerRoom.name].playersInRoom.Remove(UserSocket);
-                                            clientCharacter.playerRoom = roomMap[clientCharacter.playerRoom.down];
-                                            roomMap[clientCharacter.playerRoom.name].addplayer(UserSocket);
-                                        }
-                                        else
-                                        {
-                                            //handle error
-                                            returnMessage += ("\nERROR");
-                                            returnMessage += ("\nCan not go " + input[1] + " from here");
-                                            returnMessage += ("\nPress any key to continue");
-                                        }
-                                    }
-                                }
-                               
+                                //handle error
+                                returnMessage += ("\nERROR");
+                                returnMessage += ("\nCan not go " + input[1] + " from here");
+                                returnMessage += ("\nPress any key to continue");
                             }
+                                            
                         }
-                    }
-                    break;
+                        dungeonSearch.Close();
+                        characterSearch.Close();
+                        break;
+                }
 
-                default:
+                //default:
                     //handle error
                     returnMessage += ("\nERROR");
                     returnMessage += ("\nCan not " + key);
                     returnMessage += ("\nPress any key to continue");
                     break;
             }
-
-            int playercounter = roomMap[clientCharacter.playerRoom.name].playersInRoom.Count();
-            playercounter -= 1;
-
-            returnMessage += "There are " + playercounter + " other people in this room";
+            connection.Close();
 
            sendbuffer = encoder.GetBytes(returnMessage);
 
            bytesSent = UserSocket.Send(sendbuffer);
 
-            return clientCharacter.playerRoom;
         }
     }
 }
