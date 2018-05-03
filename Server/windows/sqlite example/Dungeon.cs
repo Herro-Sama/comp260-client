@@ -32,8 +32,6 @@ namespace server
         public void Init(string database, sqliteConnection connection)
         {
 
-            connection.Open();
-
 
         {
             var room = new Room("A1 Roof", "You find yourself on the roof of the apartment building. The view is pretty spectacular but it is not going help you complete your mission. ");
@@ -293,7 +291,7 @@ namespace server
                 
             }
 
-            connection.Close();
+            Console.WriteLine("Finished Rebuilding the Dungeon.");
         }
 
         public string SetRoom()
@@ -304,18 +302,19 @@ namespace server
 
         public void RoomInfo(Socket UserSocket, SQLiteConnection connection, Dictionary<Socket, Character> clientDictonary)
         {
+
             ASCIIEncoding encoder = new ASCIIEncoding();
             string returnMessage = "";
 
             Character character = clientDictonary[UserSocket];
 
-            command = new sqliteCommand("select * from " + "table_characters" + " where name == " + "'" + character.name + "'", connection);
+            command = new sqliteCommand("select * from " + "table_characters" + " where name = " + "'" + character.name + "'", connection);
 
             var characterSearch = command.ExecuteReader();
 
             while(characterSearch.Read())
             {
-                command = new sqliteCommand("select * from " + "table_dungeon" + " where Room == " + "'" + characterSearch["Room"] + "'", connection);
+                command = new sqliteCommand("select * from " + "table_dungeon" + " where name = " + "'" + characterSearch["room"] + "'", connection);
             }
             characterSearch.Close();
 
@@ -325,41 +324,43 @@ namespace server
             {
                
                 returnMessage += "-------------------------------";
-                returnMessage += "Name: " + dungeonSearch["name"];
-                returnMessage += "Description: " + dungeonSearch["description"];
-                returnMessage += "North: " + dungeonSearch["North"];
-                returnMessage += "South: " + dungeonSearch["South"];
-                returnMessage += "East: " + dungeonSearch["East"];
-                returnMessage += "West: " + dungeonSearch["West"];
-                returnMessage += "Up: " + dungeonSearch["Up"];
-                returnMessage += "Down: " + dungeonSearch["Down"];
-                returnMessage += "-------------------------------";
+                returnMessage += "\nName: " + dungeonSearch["name"];
+                returnMessage += "\nDescription: " + dungeonSearch["description"];
+                returnMessage += "\nNorth: " + dungeonSearch["North"];
+                returnMessage += "\nSouth: " + dungeonSearch["South"];
+                returnMessage += "\nEast: " + dungeonSearch["East"];
+                returnMessage += "\nWest: " + dungeonSearch["West"];
+                returnMessage += "\nUp: " + dungeonSearch["Up"];
+                returnMessage += "\nDown: " + dungeonSearch["Down"];
+                returnMessage += "\n-------------------------------";
 
             }
+
+            connection.Close();
 
             byte[] sendbuffer = encoder.GetBytes(returnMessage);
 
             int bytesSent = UserSocket.Send(sendbuffer);
 
 
-            try
-            {
-                Console.WriteLine("");
-                command = new sqliteCommand("select * from " + "table_dungeon" + " order by name asc", connection);
-                var reader = command.ExecuteReader();
+            //try
+            //{
+            //    Console.WriteLine("");
+            //    command = new sqliteCommand("select * from " + "table_dungeon" + " order by name asc", connection);
+            //    var reader = command.ExecuteReader();
 
-                while (reader.Read())
-                {
-                    Console.WriteLine("Name: " + reader["name"]);
-                }
+            //    while (reader.Read())
+            //    {
+            //        Console.WriteLine("Name: " + reader["name"]);
+            //    }
 
-                reader.Close();
-                Console.WriteLine("");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Failed to display DB" + ex);
-            }
+            //    reader.Close();
+            //    Console.WriteLine("");
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine("Failed to display DB" + ex);
+            //}
 
 
 
@@ -379,7 +380,7 @@ namespace server
 
             var input = key.Split(' ');
 
-            command = new sqliteCommand("select * from " + "table_characters" + " where name == " + "'" + clientCharacter.name + "'", connection);
+            command = new sqliteCommand("select * from " + "table_characters" + " where name = " + "'" + clientCharacter.name + "'", connection);
 
             var characterSearch = command.ExecuteReader();
 
@@ -413,7 +414,7 @@ namespace server
                             returnMessage += (input[i] + " ");
                         }
 
-                        command = new sqliteCommand("select * from " + "table_characters" + " where Room == " + "'" + characterSearch["room"] + "'", connection);
+                        command = new sqliteCommand("select * from " + "table_characters" + " where Room = " + "'" + characterSearch["room"] + "'", connection);
 
 
                         var sameRoomSearch = command.ExecuteReader();
@@ -432,7 +433,7 @@ namespace server
 
                     case "go":
 
-                        command = new sqliteCommand("select * from " + "table_dungeon" + " where name == " + "'" + characterSearch["room"] + "'", connection);
+                        command = new sqliteCommand("select * from " + "table_dungeon" + " where name = " + "'" + characterSearch["room"] + "'", connection);
 
                         var dungeonSearch = command.ExecuteReader();
 
@@ -441,9 +442,10 @@ namespace server
 
 
                             // is arg[1] sensible?
-                            if ((input[1].ToLower() != null) && (dungeonSearch["north"] != null))
+                            if ((input[1].ToLower() != null))
                             {
-                                command = new sqliteCommand("update table_characters set room = " + "'" + dungeonSearch["north"] + "'" + " where name = " + "'" + characterSearch["name"] + "'", connection);
+                                command = new sqliteCommand("update table_characters set room = " + "'" + dungeonSearch[input[1].ToLower()] + "'" + " where name = " + "'" + characterSearch["name"] + "'", connection);
+                                command.ExecuteNonQuery();
                             }
 
                             else
@@ -467,7 +469,6 @@ namespace server
                     returnMessage += ("\nPress any key to continue");
                     break;
             }
-            connection.Close();
 
            sendbuffer = encoder.GetBytes(returnMessage);
 

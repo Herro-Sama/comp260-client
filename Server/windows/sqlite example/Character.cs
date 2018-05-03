@@ -44,32 +44,32 @@ namespace server
 
         public bool PlayerLoginDetails(int userState, string userMessage, SQLiteConnection connection)
         {
-            if (userState == 0)
-            {
-                GenerateSalt();
+            //if (userState == 0)
+            //{
+            //    GenerateSalt();
 
 
 
-                return true;
-            }
+            //    return true;
+            //}
 
-            if (userState == 1)
-            {
+            //if (userState == 1)
+            //{
 
-                return true;
-            }
+            //    return true;
+            //}
 
-            if (userState == 2)
-            {
+            //if (userState == 2)
+            //{
 
-                return true;
-            }
+            //    return true;
+            //}
 
-            if (userState == 3)
-            {
+            //if (userState == 3)
+            //{
 
-                return true;
-            }
+            //    return true;
+            //}
 
 
             return false;
