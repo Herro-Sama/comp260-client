@@ -4,3 +4,9 @@ C:\Users\sandy\Documents\Coursework1718\comp260-client\Client\Client\obj\x86\Deb
 C:\Users\sandy\Documents\Coursework1718\comp260-client\Client\Client\obj\x86\Debug\Client.csproj.CoreCompileInputs.cache
 C:\Users\sandy\Documents\Coursework1718\comp260-client\Client\Client\obj\x86\Debug\Client.exe
 C:\Users\sandy\Documents\Coursework1718\comp260-client\Client\Client\obj\x86\Debug\Client.pdb
+D:\BSC_TEMP\comp260-client\Client\Client\bin\Debug\Client.exe
+D:\BSC_TEMP\comp260-client\Client\Client\bin\Debug\Client.pdb
+D:\BSC_TEMP\comp260-client\Client\Client\obj\x86\Debug\Client.csprojResolveAssemblyReference.cache
+D:\BSC_TEMP\comp260-client\Client\Client\obj\x86\Debug\Client.csproj.CoreCompileInputs.cache
+D:\BSC_TEMP\comp260-client\Client\Client\obj\x86\Debug\Client.exe
+D:\BSC_TEMP\comp260-client\Client\Client\obj\x86\Debug\Client.pdb

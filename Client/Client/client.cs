@@ -7,10 +7,85 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
+using System.Security.Cryptography;
+
 namespace Client
 {
     class client
-    {
+    { 
+
+        /* 
+         * Helper Function to keep character creation clean and then send the information to the server.
+        */
+        static void characterCreationLogin(Socket serverSocket)
+        {
+            string login;
+
+            bool saltArrived = false;
+
+            ConsoleKeyInfo passwordInterceptor;
+
+            StringBuilder password = new StringBuilder();
+
+            byte[] salt = new byte[16];
+
+            bool loginCompleted = false;
+
+            while (loginCompleted == false)
+            {
+                Console.WriteLine("Please Login");
+                Console.WriteLine("Your User name can be up to 20 characters long.");
+                Console.WriteLine("Your User name cannot contain any special characters.");
+
+                login = Console.ReadLine();
+
+                Console.Clear();
+
+                //while (saltArrived == false)
+                //{
+                //    try
+                //    {
+                //        byte[] buffer = new byte[4096];
+                //        int result;
+
+                //        result = serverSocket.Receive(buffer);
+
+                //        if (result > 0)
+                //        {
+                //            ASCIIEncoding encoder = new ASCIIEncoding();
+                //            String recdMsg = encoder.GetString(buffer, 0, result);
+                //            saltArrived = true;
+                //        }
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        Console.WriteLine("COULDN'T HEAR ANY SALT!");
+                //    }
+                //}
+
+                Console.WriteLine("Please enter your password");
+                Console.WriteLine("Your password will be hidden while typing");
+
+                passwordInterceptor = Console.ReadKey(true);
+
+                while (passwordInterceptor.Key != ConsoleKey.Enter)
+                {
+                    password.Append(passwordInterceptor.KeyChar);
+                    passwordInterceptor = Console.ReadKey(true);
+                }
+
+                Console.Clear();
+
+                loginCompleted = SpecialCharacterCheck(login);
+
+                if (loginCompleted == true)
+                {
+                    Console.WriteLine("Login: " + login + " Password: " + password);
+                }
+            }
+
+           
+        }
 
         static void clientRecieve(object o)
         {
@@ -18,10 +93,11 @@ namespace Client
 
             Socket morseClient = (Socket)o;
 
-            IPEndPoint ipLocal = new IPEndPoint(IPAddress.Parse("138.68.182.55"), 8221);
+            IPEndPoint ipLocal = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8221);
 
             while (ServerConnection == true)
             {
+
                 try
                 {
                     byte[] buffer = new byte[4096];
@@ -60,6 +136,23 @@ namespace Client
 	    	}
         }
 
+        static bool SpecialCharacterCheck(string userInput)
+        {
+            string specialCharacters = "`¬¦!\"£$%^&*()-_=+[{]}'#;:'#/?.,<>\\|";
+
+            foreach (var character in specialCharacters)
+            {
+                if (userInput.Contains(character))
+                {
+                    Console.WriteLine("Special Characters aren't allowed.");
+                    return false;
+                }
+
+            }
+
+            return true;
+        }
+
 
         static void Main(string[] args)
         {
@@ -67,7 +160,9 @@ namespace Client
 
             IPEndPoint ipLocal = new IPEndPoint(IPAddress.Parse("138.68.182.55"), 8221);
 
-			bool connected = false;
+            characterCreationLogin(s);
+
+            bool connected = false;
 
 			while (connected == false) 
 			{
@@ -84,7 +179,6 @@ namespace Client
 
             Thread myThread = new Thread(clientRecieve);
             myThread.Start(s);
-
 
             int ID = 0;
 
