@@ -39,6 +39,18 @@
     <Compile Include="..\..\..\sql_example.cs">
       <Link>sql_example.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\Character.cs">
+      <Link>Character.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Dungeon.cs">
+      <Link>Dungeon.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Room.cs">
+      <Link>Room.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\server.cs">
+      <Link>server.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

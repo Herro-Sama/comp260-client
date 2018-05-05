@@ -59,24 +59,6 @@ namespace server
 
             socketToCharacter.Add(receiveInfo.socket, receiveInfo.clientCharacter);
 
-            var sql = "insert into " + "table_characters" + " (name, room) values";
-            sql += "('" + receiveInfo.clientCharacter.name + "'";
-            sql += ",";
-            sql += "'" + receiveInfo.clientCharacter.playerRoom + "'";
-            sql += ")";
-            SQLiteCommand command = new sqliteCommand(sql, connection);
-
-            try
-            {
-                command.ExecuteNonQuery();
-            }
-            catch
-            {
-                Console.WriteLine("Failed to perform simple addition but still did it anyway.");
-            }
-
-            MudowRun.RoomInfo(receiveInfo.socket, connection, socketToCharacter);       
-
             while ((active == true) && (socketactive == true))
             {
                 byte[] buffer = new byte[4094];
@@ -94,7 +76,7 @@ namespace server
                         {
                             string message = encoder.GetString(buffer, 0, result);
 
-                            if (receiveInfo.clientCharacter.PlayerLoginDetails(receiveInfo.userState, message, connection) == false)
+                            if (receiveInfo.clientCharacter.PlayerLoginDetails(receiveInfo.userState, message, receiveInfo.socket, connection) == false)
                             {
                                 MudowRun.Process(receiveInfo.clientCharacter, message, receiveInfo.socket, socketToCharacter, connection);
                             }

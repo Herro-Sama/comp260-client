@@ -42,34 +42,79 @@ namespace server
             this.playerRoom = SpawnRoom;
         }
 
-        public bool PlayerLoginDetails(int userState, string userMessage, SQLiteConnection connection)
+        public bool PlayerLoginDetails(int userState, string userMessage, Socket ClientSocket, SQLiteConnection connection)
         {
-            //if (userState == 0)
-            //{
-            //    GenerateSalt();
+            ASCIIEncoding encoder = new ASCIIEncoding();
+
+            byte[] sendbuffer = null;
+
+            int bytesSent = 0;
+
+
+            // Check where the user is with the login process.
+            if (userState == 0)
+            {
+                
+
+                sendbuffer = GenerateSalt();
+                try
+                {
+                    bytesSent = ClientSocket.Send(sendbuffer);
+
+                    userState++;
+                }
+
+                catch
+                {
+                    Console.WriteLine("Failed to send stuff.");
+                }
+                return true;
+            }
+
+            // Waiting to recieve the encrypted username and password.
+            if (userState == 1)
+            {
+
+                var messageParts = userMessage.Split(' ');
+
+                var sql = "insert into " + "table_users" + " (name, password, salt) values";
+                sql += "('" + messageParts[0] + "'";
+                sql += ",";
+                sql += "'" + messageParts[1] + "'";
+                sql += ",";
+                sql += "'" + messageParts[2] + "'";
+                sql += ")";
+                SQLiteCommand command = new sqliteCommand(sql, connection);
+
+                try
+                {
+                    command.ExecuteNonQuery();
+                    userState++;
+                }
+                catch
+                {
+                    Console.WriteLine("Failed to perform simple addition but still did it anyway.");
+                }
+
+                return true;
+            }
+
+            // If the user needs to create a new character, or if they already have one.
+            if (userState == 2)
+            {
 
 
 
-            //    return true;
-            //}
 
-            //if (userState == 1)
-            //{
+                return true;
+            }
 
-            //    return true;
-            //}
+            // If they have a new account get them to send a name for their character.
+            if (userState == 3)
+            {
 
-            //if (userState == 2)
-            //{
-
-            //    return true;
-            //}
-
-            //if (userState == 3)
-            //{
-
-            //    return true;
-            //}
+                return true;
+            }
 
 
             return false;

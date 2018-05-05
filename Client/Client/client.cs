@@ -21,13 +21,13 @@ namespace Client
         {
             string login;
 
+            string serverSalt = "";
+
             bool saltArrived = false;
 
             ConsoleKeyInfo passwordInterceptor;
 
             StringBuilder password = new StringBuilder();
-
-            byte[] salt = new byte[16];
 
             bool loginCompleted = false;
 
@@ -39,29 +39,41 @@ namespace Client
 
                 login = Console.ReadLine();
 
+  
+
                 Console.Clear();
+                ASCIIEncoding encoder = new ASCIIEncoding();
+                byte[] logindetails = encoder.GetBytes(login);
 
-                //while (saltArrived == false)
-                //{
-                //    try
-                //    {
-                //        byte[] buffer = new byte[4096];
-                //        int result;
+                try
+                {
+                    int bytesSent = serverSocket.Send(logindetails);
+                }
+                catch (System.Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
 
-                //        result = serverSocket.Receive(buffer);
+                while (saltArrived == false)
+                {
+                    try
+                    {
+                        byte[] buffer = new byte[4096];
+                        int result;
 
-                //        if (result > 0)
-                //        {
-                //            ASCIIEncoding encoder = new ASCIIEncoding();
-                //            String recdMsg = encoder.GetString(buffer, 0, result);
-                //            saltArrived = true;
-                //        }
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //        Console.WriteLine("COULDN'T HEAR ANY SALT!");
-                //    }
-                //}
+                        result = serverSocket.Receive(buffer);
+
+                        if (result > 0)
+                        {
+                            serverSalt = encoder.GetString(buffer, 0, result);
+                            saltArrived = true;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("COULDN'T HEAR ANY SALT!");
+                    }
+                }
 
                 Console.WriteLine("Please enter your password");
                 Console.WriteLine("Your password will be hidden while typing");
@@ -80,7 +92,7 @@ namespace Client
 
                 if (loginCompleted == true)
                 {
-                    Console.WriteLine("Login: " + login + " Password: " + password);
+                    Console.WriteLine("Login: " + login + " Password: " + password + " Salt: "  + serverSalt);
                 }
             }
 
@@ -158,9 +170,7 @@ namespace Client
         {
             Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-            IPEndPoint ipLocal = new IPEndPoint(IPAddress.Parse("138.68.182.55"), 8221);
-
-            characterCreationLogin(s);
+            IPEndPoint ipLocal = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8221);
 
             bool connected = false;
 
@@ -176,6 +186,8 @@ namespace Client
 					Thread.Sleep (1000);
 				}
 			}
+
+            characterCreationLogin(s);
 
             Thread myThread = new Thread(clientRecieve);
             myThread.Start(s);
