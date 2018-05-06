@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
+using System.IO;
 using System.Security.Cryptography;
 
 namespace Client
@@ -71,9 +72,13 @@ namespace Client
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("COULDN'T HEAR ANY SALT!");
+                        Console.Clear();
+                        Console.WriteLine("Waiting for Server Response");
                     }
                 }
+
+
+
 
                 Console.WriteLine("Please enter your password");
                 Console.WriteLine("Your password will be hidden while typing");
@@ -89,16 +94,54 @@ namespace Client
                 Console.Clear();
 
                 loginCompleted = SpecialCharacterCheck(login);
+                loginCompleted = SpecialCharacterCheck(password.ToString());
 
                 if (loginCompleted == true)
                 {
-                    Console.WriteLine("Login: " + login + " Password: " + password + " Salt: "  + serverSalt);
+                    byte[] userdetails = encoder.GetBytes(login);
+
+                    try
+                    {
+                        string stringword = password.ToString();
+                        login += " " + GenerateSaltedHash(encoder.GetBytes(stringword), encoder.GetBytes(serverSalt)) + " " + serverSalt.ToString();
+                        logindetails = encoder.GetBytes(login);
+                        int bytesSent = serverSocket.Send(logindetails);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
                 }
             }
 
            
         }
 
+        /*
+         * This is where the salt and password are used to make a hashed password for use in the server.
+         */ 
+        static byte[] GenerateSaltedHash(byte[] plainText, byte[] salt)
+        {
+            HashAlgorithm algorithm = new SHA256Managed();
+
+            byte[] plainTextWithSaltBytes =
+              new byte[plainText.Length + salt.Length];
+
+            for (int i = 0; i < plainText.Length; i++)
+            {
+                plainTextWithSaltBytes[i] = plainText[i];
+            }
+            for (int i = 0; i < salt.Length; i++)
+            {
+                plainTextWithSaltBytes[plainText.Length + i] = salt[i];
+            }
+
+            return algorithm.ComputeHash(plainTextWithSaltBytes);
+        }
+
+        /*
+         * This is setup as a thread to get information sent from the server and then display it for the client.
+         */ 
         static void clientRecieve(object o)
         {
             bool ServerConnection = true;
@@ -148,6 +191,9 @@ namespace Client
 	    	}
         }
 
+        /*
+         * This is called whenever the user types to prevent them from typing special characters.
+         */ 
         static bool SpecialCharacterCheck(string userInput)
         {
             string specialCharacters = "`¬¦!\"£$%^&*()-_=+[{]}'#;:'#/?.,<>\\|";
@@ -165,7 +211,9 @@ namespace Client
             return true;
         }
 
-
+        /*
+         * This is the entry point for the server, and it is used to launch threads and tell the client to begin the character creation/login process.
+         */ 
         static void Main(string[] args)
         {
             Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -200,16 +248,18 @@ namespace Client
                 ID++;
                 ASCIIEncoding encoder = new ASCIIEncoding();
                 byte[] buffer = encoder.GetBytes(Msg);
-
-                try
+                if (SpecialCharacterCheck(Msg))
                 {
-                    int bytesSent = s.Send(buffer);
-                    Console.Clear();
-                    Console.WriteLine(Msg + "\nSent Request to Server");
-                }
-                catch (System.Exception ex)
-                {
-                    Console.WriteLine(ex);	
+                    try
+                    {
+                        int bytesSent = s.Send(buffer);
+                        Console.Clear();
+                        Console.WriteLine(Msg + "\nSent Request to Server");
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
                 }
                 
 

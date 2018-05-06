@@ -20,6 +20,14 @@ using sqliteCommand = System.Data.SQLite.SQLiteCommand;
 using sqliteDataReader = System.Data.SQLite.SQLiteDataReader;
 #endif
 
+/* This is the dungeon class it is used to put all the rooms into the database and also handle request from the user to move around and chat.
+ * 
+ * 
+ * 
+ */ 
+
+
+
 namespace server
 {
     public class Dungeon
@@ -28,7 +36,9 @@ namespace server
 
         sqliteCommand command;
 
-
+        /*
+         * This function is called to populate the database with all the rooms.
+         */ 
         public void Init(string database, sqliteConnection connection)
         {
 
@@ -299,7 +309,9 @@ namespace server
            return spawnRoom;
         }
 
-
+        /*
+         * This is used to display the details of the current room that the player is in.
+         */ 
         public void RoomInfo(Socket UserSocket, SQLiteConnection connection, Dictionary<Socket, Character> clientDictonary)
         {
 
@@ -336,41 +348,18 @@ namespace server
 
             }
 
-            connection.Close();
-
             byte[] sendbuffer = encoder.GetBytes(returnMessage);
 
             int bytesSent = UserSocket.Send(sendbuffer);
 
 
-            //try
-            //{
-            //    Console.WriteLine("");
-            //    command = new sqliteCommand("select * from " + "table_dungeon" + " order by name asc", connection);
-            //    var reader = command.ExecuteReader();
-
-            //    while (reader.Read())
-            //    {
-            //        Console.WriteLine("Name: " + reader["name"]);
-            //    }
-
-            //    reader.Close();
-            //    Console.WriteLine("");
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine("Failed to display DB" + ex);
-            //}
-
-
-
         }
-
-        public void Process(Character clientCharacter, String key, Socket UserSocket, Dictionary<Socket, Character> clientDictonary, SQLiteConnection connection)
+        /*
+         * This handles user requests either displaying their message and moving them around the screen. It also displays the help message if the user needs it.
+         */ 
+        public void Process(Character clientCharacter, String key, Socket UserSocket, Dictionary<Socket, Character> clientDictonary, Dictionary<string,Socket> socketDictonary, SQLiteConnection connection)
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
-
-            connection.Open();
 
             byte[] sendbuffer;
 
@@ -390,6 +379,7 @@ namespace server
 
                 switch (input[0].ToLower())
                 {
+                    // This is used to display the different actions the player can make.
                     case "help":
                         Console.Clear();
                         returnMessage += ("\nCommands are ....");
@@ -400,11 +390,12 @@ namespace server
                         Console.ReadKey(true);
                         break;
 
+                    // This does nothing.
                     case "look":
-                        //loop straight back
                         Thread.Sleep(1000);
                         break;
 
+                    // This is called when the user wants to speak to other users in his area.
                     case "say":
 
                         returnMessage += clientCharacter.name + " said ";
@@ -421,16 +412,25 @@ namespace server
 
                         while (sameRoomSearch.Read())
                         {
-                            if (sameRoomSearch["name"] != UserSocket)
+                            if (sameRoomSearch["name"] != clientDictonary[UserSocket])
                             {
+                                var clientName = sameRoomSearch["name"] as String;
                                 sendbuffer = encoder.GetBytes(returnMessage);
-                                // bytesSent = player.Send(sendbuffer);
+                                try
+                                {
+                                    bytesSent = socketDictonary[clientName].Send(sendbuffer);
+                                }
+                                catch
+                                {
+                                    Console.WriteLine("Failed to send message to others in room");
+                                }
                             }
                         }
                         Thread.Sleep(1000);
 
                         break;
 
+                    // This is called by the user to travel between rooms if it's possible to do so.
                     case "go":
 
                         command = new sqliteCommand("select * from " + "table_dungeon" + " where name = " + "'" + characterSearch["room"] + "'", connection);
@@ -459,17 +459,12 @@ namespace server
                         }
                         dungeonSearch.Close();
                         characterSearch.Close();
-                        break;
+                        return;
                 }
 
-                //default:
-                    //handle error
-                    returnMessage += ("\nERROR");
-                    returnMessage += ("\nCan not " + key);
-                    returnMessage += ("\nPress any key to continue");
-                    break;
             }
 
+            // Send the message for the user.
            sendbuffer = encoder.GetBytes(returnMessage);
 
            bytesSent = UserSocket.Send(sendbuffer);
