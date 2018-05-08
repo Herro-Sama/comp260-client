@@ -50,7 +50,7 @@ namespace server
         /*
          * This is the function used to determine and guide the player through character creation.
          */ 
-        public bool PlayerLoginDetails(ref int userState, string userMessage, Socket ClientSocket, SQLiteConnection connection, ref string clientname)
+        public bool PlayerLoginDetails(ref int userState, string userMessage, Socket ClientSocket, SQLiteConnection connection, ref string clientname, Dictionary<string, Character> stringToCharacter, ref Character character)
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
 
@@ -184,6 +184,8 @@ namespace server
                         command = new sqliteCommand(sql, connection);
                         command.ExecuteNonQuery();
                         userState++;
+                        stringToCharacter.Add(clientname, character);
+
                     }
                     catch
                     {

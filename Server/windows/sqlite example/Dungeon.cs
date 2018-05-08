@@ -312,7 +312,7 @@ namespace server
         /*
          * This is used to display the details of the current room that the player is in.
          */ 
-        public void RoomInfo(Socket UserSocket, SQLiteConnection connection, Dictionary<Socket, Character> clientDictonary)
+        public void RoomInfo(Socket UserSocket, SQLiteConnection connection, Dictionary<Socket, Character> clientDictonary, Dictionary<String, Character> stringToCharacter)
         {
 
             ASCIIEncoding encoder = new ASCIIEncoding();
@@ -357,7 +357,7 @@ namespace server
         /*
          * This handles user requests either displaying their message and moving them around the screen. It also displays the help message if the user needs it.
          */ 
-        public void Process(Character clientCharacter, String key, Socket UserSocket, Dictionary<Socket, Character> clientDictonary, Dictionary<string,Socket> socketDictonary, SQLiteConnection connection)
+        public void Process(Character clientCharacter, String key, Socket UserSocket, Dictionary<Socket, Character> clientDictonary, Dictionary<Character,Socket> socketDictonary, Dictionary<String, Character> stringToCharacter, SQLiteConnection connection)
         {
             ASCIIEncoding encoder = new ASCIIEncoding();
 
@@ -416,9 +416,10 @@ namespace server
                             {
                                 var clientName = sameRoomSearch["name"] as String;
                                 sendbuffer = encoder.GetBytes(returnMessage);
+                                var socketLookupName = stringToCharacter[clientName];
                                 try
                                 {
-                                    bytesSent = socketDictonary[clientName].Send(sendbuffer);
+                                    bytesSent = socketDictonary[socketLookupName].Send(sendbuffer);
                                 }
                                 catch
                                 {

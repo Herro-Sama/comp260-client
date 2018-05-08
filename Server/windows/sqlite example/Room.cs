@@ -20,41 +20,6 @@ namespace server
             this.name = name;
         }
 
-        //public String north
-        //{
-        //    get { return north; }
-        //    set { north = value; }
-        //}
-
-        //public String south
-        //{
-        //    get { return south; }
-        //    set { south = value; }
-        //}
-
-        //public String east
-        //{
-        //    get { return east; }
-        //    set { east = value; }
-        //}
-        //public String west
-        //{
-        //    get { return east; }
-        //    set { east = value; }
-        //}
-
-        //public String up
-        //{
-        //    get { return up; }
-        //    set { up = value; }
-        //}
-
-        //public String down
-        //{
-        //    get { return down; }
-        //    set { down = value; }
-        //}
-
         public String name = "";
         public String desc = "";
         public String north;

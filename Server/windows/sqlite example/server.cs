@@ -38,7 +38,8 @@ namespace server
         static LinkedList<string> incommingMessages = new LinkedList<string>();
         static Dictionary<String, ReceiveThreadLaunchInfo> connectedClients = new Dictionary<string, ReceiveThreadLaunchInfo>();
         static Dictionary<Socket, Character> socketToCharacter = new Dictionary<Socket, Character>();
-        static Dictionary<string, Socket> characterToSocket = new Dictionary<string, Socket>();
+        static Dictionary<Character, Socket> characterToSocket = new Dictionary<Character, Socket>();
+        static Dictionary<string, Character> stringToCharacter = new Dictionary<string, Character>();
         static Dungeon MudowRun = new Dungeon();
 
         static sqliteConnection connection;
@@ -76,7 +77,7 @@ namespace server
 
             // Add the client to dictonaries for use in dungeon->process.
             socketToCharacter.Add(receiveInfo.socket, receiveInfo.clientCharacter);
-            characterToSocket.Add(receiveInfo.clientCharacter.name, receiveInfo.socket);
+            characterToSocket.Add(receiveInfo.clientCharacter, receiveInfo.socket);
 
             // While the client exists and the program is running try and get the clients message.
             while ((active == true) && (socketactive == true))
@@ -100,19 +101,18 @@ namespace server
                             string message = encoder.GetString(buffer, 0, result);
 
                             // If the client has finished character creation and logging in the move to the MUD.
-                            if (receiveInfo.clientCharacter.PlayerLoginDetails(ref receiveInfo.userState, message, receiveInfo.socket, connection, ref receiveInfo.clientCharacter.name) == false)
+                            if (receiveInfo.clientCharacter.PlayerLoginDetails(ref receiveInfo.userState, message, receiveInfo.socket, connection, ref receiveInfo.clientCharacter.name, stringToCharacter, ref receiveInfo.clientCharacter) == false)
                             { 
                                 // Handle MUD playing.
-                                MudowRun.Process(receiveInfo.clientCharacter, message, receiveInfo.socket, socketToCharacter, characterToSocket, connection);
+                                MudowRun.Process(receiveInfo.clientCharacter, message, receiveInfo.socket, socketToCharacter, characterToSocket, stringToCharacter, connection);
                             }
                             // Display information.
-                            MudowRun.RoomInfo(receiveInfo.socket,connection, socketToCharacter);
+                            MudowRun.RoomInfo(receiveInfo.socket,connection, socketToCharacter, stringToCharacter);
                         }
                     }
                 }
                 catch (System.Exception ex)
                 {
-                    receiveInfo.socket.Send(encoder.GetBytes("Server Error has caused disconnection"));
                     socketactive = false;
                 }
             }
