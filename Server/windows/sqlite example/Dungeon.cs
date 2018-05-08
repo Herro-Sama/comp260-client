@@ -412,11 +412,21 @@ namespace server
 
                         while (sameRoomSearch.Read())
                         {
+                            Character socketLookupName;
                             if (sameRoomSearch["name"] != clientDictonary[UserSocket])
                             {
+                                socketLookupName = clientDictonary[UserSocket];
                                 var clientName = sameRoomSearch["name"] as String;
                                 sendbuffer = encoder.GetBytes(returnMessage);
-                                var socketLookupName = stringToCharacter[clientName];
+                                try
+                                {
+                                    socketLookupName = stringToCharacter[clientName];
+                                }
+                                catch
+                                {
+                                    Console.WriteLine(clientName + " Isn't logged in but they were in this room.");
+                                    continue;
+                                }
                                 try
                                 {
                                     bytesSent = socketDictonary[socketLookupName].Send(sendbuffer);
